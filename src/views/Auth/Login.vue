@@ -178,7 +178,9 @@ export default {
       this.resetForm();
     },
     redirectToLogin() {
-      this.$router.push("/login");
+      this.isRegistering = !this.isRegistering;
+      this.error = null; 
+      this.resetForm();
     }
   },
 };
