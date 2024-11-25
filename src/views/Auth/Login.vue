@@ -72,6 +72,12 @@
 
       <p v-if="error" class="text-danger mt-3 text-center">{{ error }}</p>
 
+      <div class="text-center mt-3" v-if="!isRegistering" >
+        <button class="btn btn-link" @click="openForgotPasswordModal">
+          Forgot Password?
+        </button>
+      </div>
+
       <div class="text-center mt-4">
         <button class="btn btn-link" @click="toggleAuthMode">
           {{ isRegistering
@@ -99,10 +105,38 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal Forgot Password -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Please enter your email to reset your password:</p>
+          <div class="mb-3">
+            <input
+              v-model="resetEmail"
+              type="email"
+              class="form-control"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" @click="sendPasswordReset">Send Reset Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 export default {
@@ -113,6 +147,7 @@ export default {
       phone: "",
       password: "",
       confirmPassword: "",
+      resetEmail: "", // Tambahkan ini
       error: null,
       isRegistering: false,
     };
@@ -140,8 +175,6 @@ export default {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
-      
-        console.log("User UID:", user.uid);
 
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
@@ -151,18 +184,35 @@ export default {
           role: "talent", 
         });
 
-      
         this.$nextTick(() => {
           const modal = new bootstrap.Modal(document.getElementById('successModal'));
           modal.show();
         });
-        
-  
+
         this.resetForm();
       } catch (error) {
         console.error("Firebase Error: ", error);
         this.error = error.message || "Failed to create account. Please try again.";
         this.resetForm();
+      }
+    },
+    async sendPasswordReset() {
+      const auth = getAuth();
+
+      if (!this.resetEmail) {
+        this.error = "Please enter a valid email.";
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, this.resetEmail);
+        alert("Password reset link has been sent to your email.");
+        this.resetEmail = ""; // Reset email setelah sukses
+        const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPasswordModal"));
+        modal.hide();
+      } catch (error) {
+        console.error("Error sending password reset email: ", error);
+        this.error = "Failed to send password reset email. Please try again.";
       }
     },
     resetForm() {
@@ -181,7 +231,11 @@ export default {
       this.isRegistering = !this.isRegistering;
       this.error = null; 
       this.resetForm();
-    }
+    },
+    openForgotPasswordModal() {
+      const modal = new bootstrap.Modal(document.getElementById("forgotPasswordModal"));
+      modal.show();
+    },
   },
 };
 </script>
@@ -208,5 +262,9 @@ export default {
 
 .text-danger {
   color: red;
+}
+
+.modal-content {
+  border-radius: 8px;
 }
 </style>
