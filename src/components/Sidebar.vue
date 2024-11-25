@@ -7,12 +7,18 @@
       </div>
 
       <div class="p-3">
-        <h5 v-if="!isCollapsed" class="mb-4 border-bottom border-white border-2 pb-4">Cornerstone</h5>
+        <h5 v-if="!isCollapsed" class="mb-4 border-bottom border-white border-2 pb-4 text-center">Cornerstone</h5>
         <ul class="nav flex-column text-start w-100">
-          <li class="nav-item border border-white rounded-3 mb-3" v-for="item in menuItems" :key="item.name">
+          <li
+            class="nav-item border border-white rounded-3 mb-3"
+            v-for="item in menuItems"
+            :key="item.name"
+            @click="setActiveMenu(item.name)"
+            :class="{ active: activeMenu === item.name }"
+          >
             <router-link :to="item.route" class="nav-link text-white py-1 sidebar-link">
               <i :class="item.icon"></i>
-              <span v-if="!isCollapsed" class="ms-2">{{ item.name }}</span>
+              <span class="ms-2">{{ item.name }}</span>
             </router-link>
           </li>
         </ul>
@@ -20,10 +26,9 @@
     </div>
     
     <!-- Hamburger Menu Button -->
-   <button v-if="isMobile" @click="toggleSidebar" class="hamburger-btn mt-3">
+    <button v-if="isMobile" @click="toggleSidebar" class="hamburger-btn mt-3">
       <i class="bi" :class="isCollapsed ? 'bi-list' : 'bi-x'"></i>
     </button>
-
 
     <!-- Main content area -->
     <main :class="['content', isCollapsed ? 'collapsed-content' : '']">
@@ -37,33 +42,41 @@ import { ref, onMounted, onUnmounted } from 'vue';
 
 const isCollapsed = ref(false);
 const isMobile = ref(false);
+const activeMenu = ref(null); 
 
-// Fungsi untuk toggle sidebar
+
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value;
 };
 
-// Menambahkan event listener resize untuk mengatur responsivitas
 const handleResize = () => {
   isMobile.value = window.innerWidth <= 768;
   if (isMobile.value) {
-    isCollapsed.value = true; // Sidebar otomatis collapsed di layar kecil
+    isCollapsed.value = true; 
   } else {
-    isCollapsed.value = false; // Sidebar otomatis expanded di layar besar
+    isCollapsed.value = false; 
   }
 };
 
+const setActiveMenu = (menuName) => {
+  activeMenu.value = menuName; 
+};
 
 onMounted(() => {
   window.addEventListener('resize', handleResize);
-  handleResize(); // Cek ukuran layar saat komponen pertama kali dimuat
+  handleResize(); 
+
+  const currentPath = window.location.pathname;
+  const activeItem = menuItems.find((item) => item.route === currentPath);
+  if (activeItem) {
+    activeMenu.value = activeItem.name;
+  }
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
 });
 
-// Definisikan menu items dengan properti route
 const menuItems = [
   { name: 'Dashboard', icon: 'bi bi-house', route: '/' },
   { name: 'Event', icon: 'bi bi-megaphone', route: '/event' },
@@ -73,10 +86,6 @@ const menuItems = [
 </script>
 
 <style scoped>
-body {
-  font-family: 'Poppins', sans-serif;
-}
-
 #sidebar {
   position: fixed;
   left: 0;
@@ -129,6 +138,15 @@ body {
   border-radius: 8px;
 }
 
+.nav-item.active {
+  background-color: #4a85c3;
+  color: white;
+}
+
+.nav-item.active .nav-link {
+  color: white;
+}
+
 .hamburger-btn {
   position: fixed;
   top: 10px;
@@ -149,10 +167,6 @@ body {
 
   .content {
     margin-left: 0;
-  }
-
-  #sidebar:not(.collapsed) {
-    transform: translateX(0);
   }
 }
 </style>
