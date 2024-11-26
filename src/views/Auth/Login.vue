@@ -137,7 +137,7 @@
 
 <script>
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 export default {
   data() {
@@ -147,22 +147,45 @@ export default {
       phone: "",
       password: "",
       confirmPassword: "",
-      resetEmail: "", // Tambahkan ini
+      resetEmail: "", 
       error: null,
       isRegistering: false,
     };
   },
   methods: {
     async login() {
-      const auth = getAuth();
-      try {
-        await signInWithEmailAndPassword(auth, this.email, this.password);
-        this.$router.push("/"); 
-      } catch (error) {
-        this.error = "Invalid email or password";
-        this.resetForm();
+  const auth = getAuth();
+  const db = getFirestore();
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+    const user = userCredential.user;
+
+    // Ambil data role pengguna dari Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+
+      // Simpan role di localStorage atau state management untuk akses global
+      localStorage.setItem("userRole", userData.role);
+
+      // Arahkan pengguna sesuai role
+      if (userData.role === "admin") {
+        this.$router.push("/"); // Admin Dashboard
+      } else if (userData.role === "talent") {
+        this.$router.push("/talent-dashboard"); // Talent-specific page
+      } else {
+        this.error = "Role not authorized!";
       }
-    },
+    } else {
+      throw new Error("User data not found");
+    }
+  } catch (error) {
+    console.error("Login Error: ", error);
+    this.error = "Invalid email or password";
+    this.resetForm();
+  }
+},
     async register() {
       const auth = getAuth();
       const db = getFirestore();
@@ -197,24 +220,45 @@ export default {
       }
     },
     async sendPasswordReset() {
-      const auth = getAuth();
+  const auth = getAuth();
 
-      if (!this.resetEmail) {
-        this.error = "Please enter a valid email.";
-        return;
-      }
+  if (!this.resetEmail) {
+    Swal.fire({
+      icon: "warning",
+      title: "Email Required",
+      text: "Please enter a valid email address to reset your password.",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
 
-      try {
-        await sendPasswordResetEmail(auth, this.resetEmail);
-        alert("Password reset link has been sent to your email.");
-        this.resetEmail = ""; // Reset email setelah sukses
-        const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPasswordModal"));
-        modal.hide();
-      } catch (error) {
-        console.error("Error sending password reset email: ", error);
-        this.error = "Failed to send password reset email. Please try again.";
-      }
-    },
+  try {
+    await sendPasswordResetEmail(auth, this.resetEmail);
+
+    // SweetAlert untuk notifikasi sukses
+    Swal.fire({
+      icon: "success",
+      title: "Email Sent!",
+      text: "A password reset link has been sent to your email address.",
+      confirmButtonText: "OK",
+      timer: 3000, // Opsional, otomatis hilang setelah 3 detik
+    });
+
+    this.resetEmail = ""; // Reset input email setelah sukses
+    const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPasswordModal"));
+    modal.hide();
+  } catch (error) {
+    console.error("Error sending password reset email: ", error);
+
+    // SweetAlert untuk notifikasi error
+    Swal.fire({
+      icon: "error",
+      title: "Failed to Send Email",
+      text: error.message || "An error occurred. Please try again later.",
+      confirmButtonText: "OK",
+    });
+  }
+},
     resetForm() {
       this.name = "";
       this.email = "";
