@@ -16,14 +16,13 @@
       </div>
 
       <div class="p-3">
-        <!-- Always render Cornerstone without hiding it -->
         <h5 class="mb-4 border-bottom border-white border-2 pb-4 text-center" :class="{'small-text': isCollapsed}">
           Cornerstone
         </h5>
         <ul class="nav flex-column text-start w-100">
           <li
             class="nav-item border border-white rounded-3 mb-3"
-            v-for="item in menuItems"
+            v-for="item in filteredMenuItems"
             :key="item.name"
             @click="setActiveMenu(item.name)"
             :class="{ active: activeMenu === item.name }"
@@ -49,16 +48,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { getAuth } from 'firebase/auth'; // Firebase Authentication
+import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Firestore untuk mendapatkan data pengguna
 
 const isCollapsed = ref(false);
 const isMobile = ref(false);
 const activeMenu = ref(null);
+const userRole = ref(null); // Peran pengguna
 
+// Menu Admin
+const adminMenuItems = [
+  { name: 'Dashboard', icon: 'bi bi-house', route: '/' },
+  { name: 'Event', icon: 'bi bi-megaphone', route: '/event' },
+  { name: 'Schedule', icon: 'bi bi-calendar', route: '/schedule' },
+  { name: 'Company', icon: 'bi bi-upc-scan', route: '/company' },
+];
+
+// Menu Talent
+const talentMenuItems = [
+  { name: 'Talent Dashboard', icon: 'bi bi-person', route: '/talent-dashboard' },
+  { name: 'QR Code', icon: 'bi bi-qr-code', route: '/qrcode' },
+  { name: 'Form Data', icon: 'bi bi-file-earmark', route: '/formdata' },
+  { name: 'Payment', icon: 'bi bi-credit-card', route: '/payment' },
+];
+
+// Filter menu sesuai dengan peran pengguna
+const filteredMenuItems = computed(() => {
+  if (userRole.value === 'admin') {
+    return adminMenuItems;
+  } else if (userRole.value === 'talent') {
+    return talentMenuItems;
+  }
+  return [];
+});
+
+// Toggle sidebar
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value;
 };
 
+// Cek ukuran layar untuk mobile view
 const handleResize = () => {
   isMobile.value = window.innerWidth <= 768;
   if (isMobile.value) {
@@ -68,30 +98,62 @@ const handleResize = () => {
   }
 };
 
+// Set menu aktif
 const setActiveMenu = (menuName) => {
   activeMenu.value = menuName;
 };
 
-onMounted(() => {
+// Ambil data pengguna dan peran dari Firestore
+onMounted(async () => {
   window.addEventListener('resize', handleResize);
   handleResize();
+
+  const auth = getAuth();
+  const db = getFirestore();
+  const user = auth.currentUser;
+
+  if (user) {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      userRole.value = userData.role; // Set peran pengguna (admin/talent)
+    }
+  }
+
   const currentPath = window.location.pathname;
-  const activeItem = menuItems.find((item) => item.route === currentPath);
+  const activeItem = [...adminMenuItems, ...talentMenuItems].find((item) => item.route === currentPath);
   if (activeItem) {
     activeMenu.value = activeItem.name;
   }
 });
 
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
-});
+onMounted(async () => {
+  window.addEventListener('resize', handleResize);
+  handleResize();
 
-const menuItems = [
-  { name: 'Dashboard', icon: 'bi bi-house', route: '/' },
-  { name: 'Event', icon: 'bi bi-megaphone', route: '/event' },
-  { name: 'Schedule', icon: 'bi bi-calendar', route: '/schedule' },
-  { name: 'Company', icon: 'bi bi-upc-scan', route: '/company' },
-];
+  const auth = getAuth();
+  const db = getFirestore();
+  const user = auth.currentUser;
+
+  if (user) {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      userRole.value = userData.role; // Set peran pengguna (admin/talent)
+      console.log('User Role:', userRole.value); 
+    } else {
+      console.log('User data not found!');
+    }
+  }
+
+  const currentPath = window.location.pathname;
+  const activeItem = [...adminMenuItems, ...talentMenuItems].find((item) => item.route === currentPath);
+  if (activeItem) {
+    activeMenu.value = activeItem.name;
+  }
+
+  console.log('Filtered Menu Items:', filteredMenuItems.value); // Debug log
+});
 </script>
 
 <style scoped>
@@ -109,7 +171,8 @@ const menuItems = [
 }
 
 #sidebar.collapsed {
-  width: 80px; 
+  width: 80px;
+  display: block; 
 }
 
 #sidebar.mobile-sidebar {
@@ -117,67 +180,14 @@ const menuItems = [
 }
 
 #sidebar.mobile-sidebar:not(.collapsed) {
-  transform: translateX(0); 
+  transform: translateX(0);
 }
 
 .content {
-  margin-left: 210px;
+  margin-left: 250px;
 }
 
 .collapsed-content {
-  margin-left: 80px; 
+  margin-left: 80px;
 }
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  font-size: 1.25rem;
-}
-
-.sidebar-link i {
-  font-size: 1.25rem; 
-}
-
-.sidebar-link:hover {
-  background-color: #4a85c3;
-  color: white;
-  border-radius: 8px;
-}
-
-.nav-item.active {
-  background-color: #4a85c3;
-  color: white;
-}
-
-.nav-item.active .nav-link {
-  color: white;
-}
-
-.hamburger-btn {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1100;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #285480;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  #sidebar {
-    width: 250px;
-    transform: translateX(-100%);
-  }
-
-  #sidebar.collapsed .sidebar-link span {
-    display: block;
-  }
-  
-  .content {
-    margin-left: 0;
-  }
-}
-
 </style>

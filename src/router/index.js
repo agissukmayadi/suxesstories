@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 import Dashboard from "../views/Dashboard.vue";
 
@@ -63,6 +64,42 @@ const router = createRouter({
       },
     },
     {
+      path: "/talent-dashboard",
+      component: () => import("../views/TalentDashboard.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["talent"],
+      },
+    },
+    {
+      path:'/qrcode',
+      component: () => import("../views/QrCode.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["talent"],
+      },
+    },
+    {
+      path:'/formdata',
+      component: () => import("../views/FormData.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["talent"],
+      },
+    },
+    {
+      path:'/payment',
+      component: () => import("../views/Payment.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["talent"],
+      },
+    },
+    {
+      path: "/unauthorized",
+      component: () => import("../views/Unauthorized.vue"),
+    },    
+    {
       path: "/login",
       component: () => import("../views/Auth/Login.vue"),
       meta: {
@@ -72,25 +109,38 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = getAuth();
+  const db = getFirestore();
   const requiresAuth = to.meta.requiresAuth;
   const requiresGuest = to.meta.requiresGuest;
   const requiresRole = to.meta.requiresRole;
 
-  // Menggunakan Firebase Auth untuk memeriksa status login
-  onAuthStateChanged(auth, (user) => {
-    if (requiresAuth && !user) {
-      // Jika route membutuhkan login tapi pengguna belum login
-      next("/login"); // Redirect ke halaman login
-    } else if (requiresGuest && user) {
-      // Jika route hanya untuk guest dan pengguna sudah login
-      next("/"); // Redirect ke dashboard atau halaman lain
+  const user = auth.currentUser;
+
+  if (requiresAuth && !user) {
+    next("/login"); 
+  } else if (requiresGuest && user) {
+    next("/"); 
+  } else if (user && requiresRole) {
+    // Periksa role di Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const userRole = userData.role;
+
+      if (requiresRole.includes(userRole)) {
+        next(); // Izinkan akses jika role cocok
+      } else {
+        next("/unauthorized"); // Halaman tidak diizinkan
+      }
     } else {
-      // Jika tidak ada kondisi di atas, izinkan akses
-      next();
+      next("/login"); 
     }
-  });
+  } else {
+    next(); 
+  }
 });
+
 
 export default router;

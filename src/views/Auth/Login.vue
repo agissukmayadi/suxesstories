@@ -137,7 +137,7 @@
 
 <script>
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 export default {
   data() {
@@ -154,15 +154,38 @@ export default {
   },
   methods: {
     async login() {
-      const auth = getAuth();
-      try {
-        await signInWithEmailAndPassword(auth, this.email, this.password);
-        this.$router.push("/"); 
-      } catch (error) {
-        this.error = "Invalid email or password";
-        this.resetForm();
+  const auth = getAuth();
+  const db = getFirestore();
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+    const user = userCredential.user;
+
+    // Ambil data role pengguna dari Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+
+      // Simpan role di localStorage atau state management untuk akses global
+      localStorage.setItem("userRole", userData.role);
+
+      // Arahkan pengguna sesuai role
+      if (userData.role === "admin") {
+        this.$router.push("/"); // Admin Dashboard
+      } else if (userData.role === "talent") {
+        this.$router.push("/talent-dashboard"); // Talent-specific page
+      } else {
+        this.error = "Role not authorized!";
       }
-    },
+    } else {
+      throw new Error("User data not found");
+    }
+  } catch (error) {
+    console.error("Login Error: ", error);
+    this.error = "Invalid email or password";
+    this.resetForm();
+  }
+},
     async register() {
       const auth = getAuth();
       const db = getFirestore();
