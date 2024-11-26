@@ -147,7 +147,7 @@ export default {
       phone: "",
       password: "",
       confirmPassword: "",
-      resetEmail: "", // Tambahkan ini
+      resetEmail: "", 
       error: null,
       isRegistering: false,
     };
@@ -197,24 +197,45 @@ export default {
       }
     },
     async sendPasswordReset() {
-      const auth = getAuth();
+  const auth = getAuth();
 
-      if (!this.resetEmail) {
-        this.error = "Please enter a valid email.";
-        return;
-      }
+  if (!this.resetEmail) {
+    Swal.fire({
+      icon: "warning",
+      title: "Email Required",
+      text: "Please enter a valid email address to reset your password.",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
 
-      try {
-        await sendPasswordResetEmail(auth, this.resetEmail);
-        alert("Password reset link has been sent to your email.");
-        this.resetEmail = ""; // Reset email setelah sukses
-        const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPasswordModal"));
-        modal.hide();
-      } catch (error) {
-        console.error("Error sending password reset email: ", error);
-        this.error = "Failed to send password reset email. Please try again.";
-      }
-    },
+  try {
+    await sendPasswordResetEmail(auth, this.resetEmail);
+
+    // SweetAlert untuk notifikasi sukses
+    Swal.fire({
+      icon: "success",
+      title: "Email Sent!",
+      text: "A password reset link has been sent to your email address.",
+      confirmButtonText: "OK",
+      timer: 3000, // Opsional, otomatis hilang setelah 3 detik
+    });
+
+    this.resetEmail = ""; // Reset input email setelah sukses
+    const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPasswordModal"));
+    modal.hide();
+  } catch (error) {
+    console.error("Error sending password reset email: ", error);
+
+    // SweetAlert untuk notifikasi error
+    Swal.fire({
+      icon: "error",
+      title: "Failed to Send Email",
+      text: error.message || "An error occurred. Please try again later.",
+      confirmButtonText: "OK",
+    });
+  }
+},
     resetForm() {
       this.name = "";
       this.email = "";
