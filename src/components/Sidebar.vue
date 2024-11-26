@@ -1,13 +1,25 @@
 <template>
   <div class="d-flex">
     <!-- Sidebar -->
-    <div :class="['sidebar', isCollapsed ? 'collapsed' : '', isMobile ? 'mobile-sidebar' : '']" id="sidebar" class="text-white">
+    <div
+      :class="['sidebar', isCollapsed ? 'collapsed' : '', isMobile ? 'mobile-sidebar' : '']"
+      id="sidebar"
+      class="text-white"
+    >
       <div class="bg-white mb-3 d-flex justify-content-center">
-        <img src="../assets/img/Logo-Success-Story.png" alt="Logo" class="w-75" style="max-width: 200px; height: auto;">
+        <img
+          src="../assets/img/Logo-Success-Story.png"
+          alt="Logo"
+          class="logo w-75"
+          style="max-width: 200px; height: auto"
+        />
       </div>
 
       <div class="p-3">
-        <h5 v-if="!isCollapsed" class="mb-4 border-bottom border-white border-2 pb-4 text-center">Cornerstone</h5>
+        <!-- Always render Cornerstone without hiding it -->
+        <h5 class="mb-4 border-bottom border-white border-2 pb-4 text-center" :class="{'small-text': isCollapsed}">
+          Cornerstone
+        </h5>
         <ul class="nav flex-column text-start w-100">
           <li
             class="nav-item border border-white rounded-3 mb-3"
@@ -24,8 +36,7 @@
         </ul>
       </div>
     </div>
-    
-    <!-- Hamburger Menu Button -->
+
     <button v-if="isMobile" @click="toggleSidebar" class="hamburger-btn mt-3">
       <i class="bi" :class="isCollapsed ? 'bi-list' : 'bi-x'"></i>
     </button>
@@ -42,8 +53,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 
 const isCollapsed = ref(false);
 const isMobile = ref(false);
-const activeMenu = ref(null); 
-
+const activeMenu = ref(null);
 
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value;
@@ -52,20 +62,19 @@ const toggleSidebar = () => {
 const handleResize = () => {
   isMobile.value = window.innerWidth <= 768;
   if (isMobile.value) {
-    isCollapsed.value = true; 
+    isCollapsed.value = true;
   } else {
-    isCollapsed.value = false; 
+    isCollapsed.value = false;
   }
 };
 
 const setActiveMenu = (menuName) => {
-  activeMenu.value = menuName; 
+  activeMenu.value = menuName;
 };
 
 onMounted(() => {
   window.addEventListener('resize', handleResize);
-  handleResize(); 
-
+  handleResize();
   const currentPath = window.location.pathname;
   const activeItem = menuItems.find((item) => item.route === currentPath);
   if (activeItem) {
@@ -95,11 +104,12 @@ const menuItems = [
   height: 100vh;
   background-color: #285480;
   z-index: 1000;
-  transition: width 0.3s, transform 0.3s;
+  transition: 0.3s;
+  overflow-y: auto;
 }
 
 #sidebar.collapsed {
-  width: 80px;
+  width: 80px; 
 }
 
 #sidebar.mobile-sidebar {
@@ -107,29 +117,25 @@ const menuItems = [
 }
 
 #sidebar.mobile-sidebar:not(.collapsed) {
-  transform: translateX(0);
+  transform: translateX(0); 
+}
+
+.content {
+  margin-left: 210px;
+}
+
+.collapsed-content {
+  margin-left: 80px; 
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-}
-
-.sidebar-link i {
   font-size: 1.25rem;
 }
 
-.collapsed .sidebar-link span {
-  display: none;
-}
-
-.content {
-  margin-left: 210px;
-  transition: margin-left 0.3s;
-}
-
-.collapsed-content {
-  margin-left: 80px;
+.sidebar-link i {
+  font-size: 1.25rem; 
 }
 
 .sidebar-link:hover {
@@ -165,8 +171,13 @@ const menuItems = [
     transform: translateX(-100%);
   }
 
+  #sidebar.collapsed .sidebar-link span {
+    display: block;
+  }
+  
   .content {
     margin-left: 0;
   }
 }
+
 </style>
