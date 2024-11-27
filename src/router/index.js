@@ -117,37 +117,43 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   const auth = getAuth();
   const db = getFirestore();
   const requiresAuth = to.meta.requiresAuth;
   const requiresGuest = to.meta.requiresGuest;
   const requiresRole = to.meta.requiresRole;
 
-  const user = auth.currentUser;
+  const waitForAuth = () =>
+    new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => {
+        resolve(user);
+      });
+    });
 
-  if (requiresAuth && !user) {
-    next("/login");
-  } else if (requiresGuest && user) {
-    next("/");
-  } else if (user && requiresRole) {
-    // Periksa role di Firestore
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      const userRole = userData.role;
+  waitForAuth().then(async (user) => {
+    if (requiresAuth && !user) {
+      next("/login");
+    } else if (requiresGuest && user) {
+      next("/");
+    } else if (user && requiresRole) {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const userRole = userData.role;
 
-      if (requiresRole.includes(userRole)) {
-        next(); // Izinkan akses jika role cocok
+        if (requiresRole.includes(userRole)) {
+          next();
+        } else {
+          next("/unauthorized");
+        }
       } else {
-        next("/unauthorized"); // Halaman tidak diizinkan
+        next("/login");
       }
     } else {
-      next("/login");
+      next();
     }
-  } else {
-    next();
-  }
+  });
 });
 
 export default router;

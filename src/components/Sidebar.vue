@@ -61,6 +61,7 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { getAuth } from "firebase/auth"; // Firebase Authentication
 import { getFirestore, doc, getDoc } from "firebase/firestore"; // Firestore untuk mendapatkan data pengguna
+import { onAuthStateChanged } from "firebase/auth";
 
 const isCollapsed = ref(false);
 const isMobile = ref(false);
@@ -129,15 +130,16 @@ onMounted(async () => {
 
   const auth = getAuth();
   const db = getFirestore();
-  const user = auth.currentUser;
 
-  if (user) {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      userRole.value = userData.role; // Set peran pengguna (admin/talent)
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        userRole.value = userData.role; // Set peran pengguna (admin/talent)
+      }
     }
-  }
+  });
 
   const currentPath = window.location.pathname;
   const activeItem = [...adminMenuItems, ...talentMenuItems].find(
@@ -146,36 +148,6 @@ onMounted(async () => {
   if (activeItem) {
     activeMenu.value = activeItem.name;
   }
-});
-
-onMounted(async () => {
-  window.addEventListener("resize", handleResize);
-  handleResize();
-
-  const auth = getAuth();
-  const db = getFirestore();
-  const user = auth.currentUser;
-
-  if (user) {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      userRole.value = userData.role; // Set peran pengguna (admin/talent)
-      console.log("User Role:", userRole.value);
-    } else {
-      console.log("User data not found!");
-    }
-  }
-
-  const currentPath = window.location.pathname;
-  const activeItem = [...adminMenuItems, ...talentMenuItems].find(
-    (item) => item.route === currentPath
-  );
-  if (activeItem) {
-    activeMenu.value = activeItem.name;
-  }
-
-  console.log("Filtered Menu Items:", filteredMenuItems.value); // Debug log
 });
 </script>
 
