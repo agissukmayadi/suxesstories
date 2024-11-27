@@ -88,6 +88,14 @@ const router = createRouter({
       },
     },
     {
+      path: "/assign-event",
+      component: () => import("../views/AssignEvent.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["talent"],
+      },
+    },
+    {
       path: "/formdata",
       component: () => import("../views/FormData.vue"),
       meta: {

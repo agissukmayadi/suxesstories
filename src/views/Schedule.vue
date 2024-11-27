@@ -34,16 +34,27 @@
               v-for="day in week"
               :key="day"
               class="position-relative"
-              :class="{ 'table-active': day === today }"
-              @click="goToCreateEvent(day)"
-              style="cursor: pointer"
+              :class="{
+                'table-active': isToday(day),
+              }"
+              @click="
+                day && (isToday(day) || isFuture(day)) && goToCreateEvent(day)
+              "
+              :style="{
+                cursor: day && (isToday(day) || isFuture(day)) ? 'pointer' : '',
+              }"
             >
               <span v-if="day">{{ day }}</span>
               <ul class="list-unstyled mt-2">
                 <li
                   v-for="event in eventsByDate(day)"
                   :key="event.id"
-                  class="badge d-block mb-1 color-primary"
+                  class="badge d-block mb-1"
+                  :class="{
+                    'bg-danger': isPastEvent(event.date),
+                    'bg-success': isTodayEvent(event.date),
+                    'color-primary': isFutureEvent(event.date),
+                  }"
                 >
                   {{ event.name }}
                 </li>
@@ -181,7 +192,54 @@ export default {
       ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       this.$router.push({ path: "/event/create", query: { date } });
     },
+
+    isToday(day) {
+      if (!day) return false;
+      const today = new Date();
+      const currentDate = new Date(
+        this.currentYear,
+        this.currentMonthIndex,
+        day
+      );
+      return (
+        currentDate.getDate() === today.getDate() &&
+        currentDate.getMonth() === today.getMonth() &&
+        currentDate.getFullYear() === today.getFullYear()
+      );
+    },
+    isPastEvent(eventDate) {
+      const today = new Date().toISOString().split("T")[0];
+      return eventDate < today;
+    },
+    isTodayEvent(eventDate) {
+      const today = new Date().toISOString().split("T")[0];
+      return eventDate === today;
+    },
+    isFutureEvent(eventDate) {
+      const today = new Date().toISOString().split("T")[0];
+      return eventDate > today;
+    },
+    isToday(day) {
+      const today = new Date();
+      const currentDate = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      const selectedDate = `${this.currentYear}-${String(
+        this.currentMonthIndex + 1
+      ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      return currentDate === selectedDate;
+    },
+    isFuture(day) {
+      const today = new Date();
+      const selectedDate = new Date(
+        this.currentYear,
+        this.currentMonthIndex,
+        day
+      );
+      return selectedDate > today;
+    },
   },
+
   mounted() {
     this.updateCalendar();
   },

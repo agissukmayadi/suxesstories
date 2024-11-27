@@ -56,6 +56,7 @@
           id="date"
           class="form-control"
           v-model="form.date"
+          :min="today"
           required
         />
       </div>
@@ -239,6 +240,15 @@ export default {
     if (urlDate) {
       this.form.date = urlDate; // Setel nilai form.date dengan parameter date
     }
+  },
+  computed: {
+    today() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
   },
 };
 </script>
