@@ -2,7 +2,11 @@
   <div class="d-flex">
     <!-- Sidebar -->
     <div
-      :class="['sidebar', isCollapsed ? 'collapsed' : '', isMobile ? 'mobile-sidebar' : '']"
+      :class="[
+        'sidebar',
+        isCollapsed ? 'collapsed' : '',
+        isMobile ? 'mobile-sidebar' : '',
+      ]"
       id="sidebar"
       class="text-white"
     >
@@ -16,7 +20,10 @@
       </div>
 
       <div class="p-3">
-        <h5 class="mb-4 border-bottom border-white border-2 pb-4 text-center" :class="{'small-text': isCollapsed}">
+        <h5
+          class="mb-4 border-bottom border-white border-2 pb-4 text-center"
+          :class="{ 'small-text': isCollapsed }"
+        >
           Cornerstone
         </h5>
         <ul class="nav flex-column text-start w-100">
@@ -27,7 +34,10 @@
             @click="setActiveMenu(item.name)"
             :class="{ active: activeMenu === item.name }"
           >
-            <router-link :to="item.route" class="nav-link text-white py-1 sidebar-link">
+            <router-link
+              :to="item.route"
+              class="nav-link text-white py-1 sidebar-link"
+            >
               <i :class="item.icon"></i>
               <span class="ms-2">{{ item.name }}</span>
             </router-link>
@@ -48,9 +58,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { getAuth } from 'firebase/auth'; // Firebase Authentication
-import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Firestore untuk mendapatkan data pengguna
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import { getAuth } from "firebase/auth"; // Firebase Authentication
+import { getFirestore, doc, getDoc } from "firebase/firestore"; // Firestore untuk mendapatkan data pengguna
 
 const isCollapsed = ref(false);
 const isMobile = ref(false);
@@ -59,25 +69,34 @@ const userRole = ref(null); // Peran pengguna
 
 // Menu Admin
 const adminMenuItems = [
-  { name: 'Dashboard', icon: 'bi bi-house', route: '/' },
-  { name: 'Event', icon: 'bi bi-megaphone', route: '/event' },
-  { name: 'Schedule', icon: 'bi bi-calendar', route: '/schedule' },
-  { name: 'Company', icon: 'bi bi-upc-scan', route: '/company' },
+  { name: "Dashboard", icon: "bi bi-house", route: "/" },
+  { name: "Event", icon: "bi bi-megaphone", route: "/event" },
+  { name: "Schedule", icon: "bi bi-calendar", route: "/schedule" },
+  { name: "Company", icon: "bi bi-upc-scan", route: "/company" },
+  {
+    name: "User",
+    icon: "bi bi-people",
+    route: "/user",
+  },
 ];
 
 // Menu Talent
 const talentMenuItems = [
-  { name: 'Talent Dashboard', icon: 'bi bi-person', route: '/talent-dashboard' },
-  { name: 'QR Code', icon: 'bi bi-qr-code', route: '/qrcode' },
-  { name: 'Form Data', icon: 'bi bi-file-earmark', route: '/formdata' },
-  { name: 'Payment', icon: 'bi bi-credit-card', route: '/payment' },
+  {
+    name: "Talent Dashboard",
+    icon: "bi bi-person",
+    route: "/talent-dashboard",
+  },
+  { name: "QR Code", icon: "bi bi-qr-code", route: "/qrcode" },
+  { name: "Form Data", icon: "bi bi-file-earmark", route: "/formdata" },
+  { name: "Payment", icon: "bi bi-credit-card", route: "/payment" },
 ];
 
 // Filter menu sesuai dengan peran pengguna
 const filteredMenuItems = computed(() => {
-  if (userRole.value === 'admin') {
+  if (userRole.value === "admin") {
     return adminMenuItems;
-  } else if (userRole.value === 'talent') {
+  } else if (userRole.value === "talent") {
     return talentMenuItems;
   }
   return [];
@@ -105,7 +124,7 @@ const setActiveMenu = (menuName) => {
 
 // Ambil data pengguna dan peran dari Firestore
 onMounted(async () => {
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
   handleResize();
 
   const auth = getAuth();
@@ -121,14 +140,16 @@ onMounted(async () => {
   }
 
   const currentPath = window.location.pathname;
-  const activeItem = [...adminMenuItems, ...talentMenuItems].find((item) => item.route === currentPath);
+  const activeItem = [...adminMenuItems, ...talentMenuItems].find(
+    (item) => item.route === currentPath
+  );
   if (activeItem) {
     activeMenu.value = activeItem.name;
   }
 });
 
 onMounted(async () => {
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
   handleResize();
 
   const auth = getAuth();
@@ -140,19 +161,21 @@ onMounted(async () => {
     if (userDoc.exists()) {
       const userData = userDoc.data();
       userRole.value = userData.role; // Set peran pengguna (admin/talent)
-      console.log('User Role:', userRole.value); 
+      console.log("User Role:", userRole.value);
     } else {
-      console.log('User data not found!');
+      console.log("User data not found!");
     }
   }
 
   const currentPath = window.location.pathname;
-  const activeItem = [...adminMenuItems, ...talentMenuItems].find((item) => item.route === currentPath);
+  const activeItem = [...adminMenuItems, ...talentMenuItems].find(
+    (item) => item.route === currentPath
+  );
   if (activeItem) {
     activeMenu.value = activeItem.name;
   }
 
-  console.log('Filtered Menu Items:', filteredMenuItems.value); // Debug log
+  console.log("Filtered Menu Items:", filteredMenuItems.value); // Debug log
 });
 </script>
 
@@ -172,7 +195,7 @@ onMounted(async () => {
 
 #sidebar.collapsed {
   width: 80px;
-  display: block; 
+  display: block;
 }
 
 #sidebar.mobile-sidebar {

@@ -56,6 +56,14 @@ const router = createRouter({
       },
     },
     {
+      path: "/user",
+      component: () => import("../views/User.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["admin"],
+      },
+    },
+    {
       path: "/formschedule",
       component: () => import("../components/FormS.vue"),
       meta: {
@@ -72,7 +80,7 @@ const router = createRouter({
       },
     },
     {
-      path:'/qrcode',
+      path: "/qrcode",
       component: () => import("../views/QrCode.vue"),
       meta: {
         requiresAuth: true,
@@ -80,7 +88,7 @@ const router = createRouter({
       },
     },
     {
-      path:'/formdata',
+      path: "/formdata",
       component: () => import("../views/FormData.vue"),
       meta: {
         requiresAuth: true,
@@ -88,7 +96,7 @@ const router = createRouter({
       },
     },
     {
-      path:'/payment',
+      path: "/payment",
       component: () => import("../views/Payment.vue"),
       meta: {
         requiresAuth: true,
@@ -98,7 +106,7 @@ const router = createRouter({
     {
       path: "/unauthorized",
       component: () => import("../views/Unauthorized.vue"),
-    },    
+    },
     {
       path: "/login",
       component: () => import("../views/Auth/Login.vue"),
@@ -119,9 +127,9 @@ router.beforeEach(async (to, from, next) => {
   const user = auth.currentUser;
 
   if (requiresAuth && !user) {
-    next("/login"); 
+    next("/login");
   } else if (requiresGuest && user) {
-    next("/"); 
+    next("/");
   } else if (user && requiresRole) {
     // Periksa role di Firestore
     const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -135,12 +143,11 @@ router.beforeEach(async (to, from, next) => {
         next("/unauthorized"); // Halaman tidak diizinkan
       }
     } else {
-      next("/login"); 
+      next("/login");
     }
   } else {
-    next(); 
+    next();
   }
 });
-
 
 export default router;
