@@ -234,6 +234,11 @@ export default {
   mounted() {
     this.fetchCompanies();
     this.fetchTests();
+
+    const urlDate = this.$route.query.date;
+    if (urlDate) {
+      this.form.date = urlDate; // Setel nilai form.date dengan parameter date
+    }
   },
 };
 </script>
