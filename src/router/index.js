@@ -88,7 +88,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/assign-event",
+      path: "/assign-event/:id",
       component: () => import("../views/AssignEvent.vue"),
       meta: {
         requiresAuth: true,
