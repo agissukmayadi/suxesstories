@@ -64,14 +64,6 @@ const router = createRouter({
       },
     },
     {
-      path: "/formschedule",
-      component: () => import("../components/FormS.vue"),
-      meta: {
-        requiresAuth: true,
-        requiresRole: ["admin"],
-      },
-    },
-    {
       path: "/talent-dashboard",
       component: () => import("../views/TalentDashboard.vue"),
       meta: {
@@ -106,6 +98,14 @@ const router = createRouter({
     {
       path: "/payment",
       component: () => import("../views/Payment.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresRole: ["talent"],
+      },
+    },
+    {
+      path: "/success",
+      component: () => import("../views/Success.vue"),
       meta: {
         requiresAuth: true,
         requiresRole: ["talent"],

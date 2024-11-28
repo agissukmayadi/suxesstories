@@ -8,7 +8,6 @@
         isMobile ? 'mobile-sidebar' : '',
       ]"
       id="sidebar"
-      class="text-white"
     >
       <div class="bg-white mb-3 d-flex justify-content-center">
         <img
@@ -21,7 +20,7 @@
 
       <div class="p-3">
         <h5
-          class="mb-4 border-bottom border-white border-2 pb-4 text-center"
+          class="mb-4 border-bottom border-white border-2 pb-4 text-center text-white"
           :class="{ 'small-text': isCollapsed }"
         >
           Cornerstone
@@ -58,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { getAuth } from "firebase/auth"; // Firebase Authentication
 import { getFirestore, doc, getDoc } from "firebase/firestore"; // Firestore untuk mendapatkan data pengguna
 import { onAuthStateChanged } from "firebase/auth";
@@ -161,28 +160,61 @@ onMounted(async () => {
   height: 100vh;
   background-color: #285480;
   z-index: 1000;
-  transition: 0.3s;
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
   overflow-y: auto;
 }
-
 #sidebar.collapsed {
   width: 80px;
-  display: block;
 }
-
 #sidebar.mobile-sidebar {
   transform: translateX(-100%);
 }
-
 #sidebar.mobile-sidebar:not(.collapsed) {
   transform: translateX(0);
 }
-
 .content {
-  margin-left: 250px;
+  margin-left: 220px;
 }
-
-.collapsed-content {
-  margin-left: 80px;
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+.sidebar-link i {
+  font-size: 1.25rem;
+}
+.sidebar-link:hover {
+  background-color: #4a85c3;
+  color: white;
+  border-radius: 8px;
+}
+.nav-item.active {
+  background-color: #4a85c3;
+  color: white;
+}
+.nav-item.active .nav-link {
+  color: white;
+}
+.hamburger-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #285480;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  #sidebar {
+    transform: translateX(-100%);
+  }
+  #sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+  .content {
+    margin-left: 0;
+  }
 }
 </style>

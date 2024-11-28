@@ -27,14 +27,14 @@
             class="card-body d-flex align-items-center justify-content-between"
           >
             <div>
-              <h5 class="card-title">Company</h5>
-              <h3 class="text-success">50</h3>
-              <p class="text-muted">Periode 2024</p>
+              <h5 class="card-title">Talent</h5>
+              <h3 class="text-success">220</h3>
+              <p class="text-muted">Peserta</p>
             </div>
             <!-- Progress Circle -->
             <div class="d-flex me-3">
               <div class="progress-circle text-success">
-                <span>50+</span>
+                <span>200+</span>
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@
               >
                 <!-- Gambar kecil -->
                 <img
-                  :src="event.image"
+                  src="../assets/img/poster.jpg"
                   alt="Event Image"
                   class="img-thumbnail me-3"
                   style="width: 50px; height: 50px; object-fit: cover"
@@ -172,7 +172,7 @@ export default {
           id: 1,
           title: "Event A",
           description: "Deskripsi Event A",
-          image: "https://via.placeholder.com/50",
+          image: "../assets/img/profile.jpg",
         },
         {
           id: 2,
