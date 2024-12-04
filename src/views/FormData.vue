@@ -1,9 +1,6 @@
 <template>
   <div class="container">
-    <form
-      @submit.prevent="submitForm"
-      class="bg-light p-4 rounded border mx-auto"
-    >
+    <form @submit.prevent="submitForm" class="p-4 rounded border mx-auto">
       <h4 class="mb-3 border-bottom" style="padding-bottom: 8px">
         Form Data Diri Talent
       </h4>
@@ -14,6 +11,7 @@
           id="namaLengkap"
           class="form-control"
           placeholder="Masukkan nama lengkap"
+          v-model="namaLengkap"
         />
       </div>
       <div class="mb-3">
@@ -23,11 +21,17 @@
           id="email"
           class="form-control"
           placeholder="Masukkan alamat email"
+          v-model="email"
         />
       </div>
       <div class="mb-3">
         <label for="tanggalLahir" class="form-label">Tanggal Lahir</label>
-        <input type="date" id="tanggalLahir" class="form-control" />
+        <input
+          type="date"
+          id="tanggalLahir"
+          class="form-control"
+          v-model="tanggalLahir"
+        />
       </div>
       <div class="mb-3">
         <label for="kotaDomisili" class="form-label">Kota Domisili</label>
@@ -36,6 +40,7 @@
           id="kotaDomisili"
           class="form-control"
           placeholder="Masukkan kota domisili"
+          v-model="kotaDomisili"
         />
       </div>
       <div class="mb-3">
@@ -45,6 +50,7 @@
           id="nomorHandphone"
           class="form-control"
           placeholder="Masukkan nomor handphone"
+          v-model="nomorHandphone"
         />
       </div>
       <div class="mb-3">
@@ -57,6 +63,7 @@
               name="jenisKelamin"
               class="form-check-input"
               value="Perempuan"
+              v-model="jenisKelamin"
             />
             <label for="perempuan" class="form-check-label">Perempuan</label>
           </div>
@@ -67,20 +74,53 @@
               name="jenisKelamin"
               class="form-check-input"
               value="Laki-Laki"
+              v-model="jenisKelamin"
             />
             <label for="lakiLaki" class="form-check-label">Laki-Laki</label>
           </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-1">Submit</button>
     </form>
   </div>
 </template>
 
 <script>
-const submitForm = async () => {};
+export default {
+  data() {
+    return {
+      namaLengkap: '',
+      email: '',
+      tanggalLahir: '',
+      kotaDomisili: '',
+      nomorHandphone: '',
+      jenisKelamin: '',
+    };
+  },
+  methods: {
+    async submitForm() {
+      // Validasi input
+      if (
+        this.namaLengkap &&
+        this.email &&
+        this.tanggalLahir &&
+        this.kotaDomisili &&
+        this.nomorHandphone &&
+        this.jenisKelamin
+      ) {
+        // Jika semua data sudah diisi, arahkan ke halaman lain
+        this.$router.push('/payment');
+      } else {
+        alert('Tolong lengkapi semua data!');
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
-/* Tidak ada CSS tambahan */
+.btn-1 {
+  background-color: #285480;
+  color: white;
+}
 </style>
