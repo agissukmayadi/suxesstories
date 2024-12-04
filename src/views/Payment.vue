@@ -8,7 +8,7 @@
       </div>
       <div class="mb-3">
         <label for="metodePembayaran" class="form-label">Metode Pembayaran</label>
-        <select id="metodePembayaran" class="form-select">
+        <select id="metodePembayaran" class="form-select" v-model="selectpay">
           <option value="transferBank">Transfer Bank</option>
           <option value="kartuKredit">Kartu Kredit</option>
           <option value="eWallet">E-Wallet</option>
@@ -20,10 +20,17 @@
       </div>
       <div class="mb-3">
         <label for="testYangDiambil" class="form-label">Test Yang Diambil</label>
-        <select id="testYangDiambil" class="form-select">
-          <option value="testA">Test A</option>
-          <option value="testB">Test B</option>
-          <option value="testC">Test C</option>
+        <select id="testYangDiambil" class="form-select" v-model="selectedTest">
+          <option value="5pftipologi">5pf tipologi</option>
+          <option value="CFIT3">CFIT 3</option>
+          <option value="NegotiatonSkillTest">Negotiaton Skill Test</option>
+          <option value="AchievementMotivationProfile">Achievement Motivation Profile</option>
+          <option value="GoalSettingTest">Goal Setting Test</option>
+          <option value="ScholasticAptitudesQuestionnaire">Scholastic Aptitudes Questionnaire</option>
+          <option value="Personality5.0">Personality 5.0</option>
+          <option value="CreativeProblemSolving">Creative Problem Solving</option>
+          <option value="EmotionalIntelligenceTest">Emotional Intelligence Test</option>
+          <option value="TeachingStyleProfile">Teaching Style Profile</option>
         </select>
       </div>
       <div class="mb-3">
@@ -39,23 +46,37 @@
         </ul>
       </div>
       <div class="d-flex justify-content-start gap-1">
-        <button type="submit" class="btn btn-primary">Bayar Sekarang</button>
-        <button type="button" class="btn btn-secondary" @click="cancelPayment">Cancel</button>
+        <button type="submit" class="btn btn-1">Bayar Sekarang</button>
+        <button type="button" class="btn btn-cancel" @click="cancelPayment">Cancel</button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 const submitPayment = () => {
   console.log('Payment submitted');
+  router.push('/success');
 };
 
 const cancelPayment = () => {
   console.log('Payment cancelled');
+  router.push('/formdata');
 };
 </script>
 
 <style scoped>
-/* Tidak ada CSS tambahan */
+.btn-1 {
+  background-color: #285480;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  border: 2px solid #285480;
+  color: #285480;
+}
 </style>
