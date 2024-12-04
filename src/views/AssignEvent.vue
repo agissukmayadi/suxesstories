@@ -133,7 +133,8 @@
 
 <script setup>
 import { reactive, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
 import {
   getFirestore,
   doc,
@@ -145,6 +146,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
 
 const route = useRoute();
+const router = useRouter();
 const form = reactive({
   name: "",
   email: "",
@@ -308,9 +310,25 @@ const addRegistration = async () => {
     const registrationsRef = collection(db, "registrations");
     await setDoc(doc(registrationsRef), registrationData);
 
-    alert("Pendaftaran berhasil!");
-    // Reset form jika diperlukan
-    Object.keys(form).forEach((key) => (form[key] = ""));
+    const response = await axios.post(
+      "http://localhost:5000/api/email-event",
+      {
+        name: form.name,
+        tests: selectedTests,
+        email: form.email,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      router.push("/success");
+    }
+
+    // Object.keys(form).forEach((key) => (form[key] = ""));
   } catch (error) {
     console.error("Error saat menyimpan data pendaftaran:", error);
     alert("Terjadi kesalahan saat mendaftar. Silakan coba lagi.");
