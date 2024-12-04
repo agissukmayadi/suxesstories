@@ -7,7 +7,7 @@
       </h4>
     </div>
     <div v-else>
-      <div>
+      <div style="display: none">
         <h4>{{ selectedEvent.name }}</h4>
         <p>{{ selectedEvent.description }}</p>
         <p><strong>Event Date:</strong> {{ selectedEvent.date }}</p>
@@ -125,7 +125,7 @@
             </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary btn-1">Submit</button>
       </form>
     </div>
   </div>
@@ -378,5 +378,8 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-/* Styling tambahan jika diperlukan */
+.btn-1 {
+  background-color: #285480;
+  color: white;
+}
 </style>

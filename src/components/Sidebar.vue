@@ -72,11 +72,11 @@ const adminMenuItems = [
   { name: "Dashboard", icon: "bi bi-house", route: "/" },
   { name: "Event", icon: "bi bi-megaphone", route: "/event" },
   { name: "Schedule", icon: "bi bi-calendar", route: "/schedule" },
-  { name: "Company", icon: "bi bi-upc-scan", route: "/company" },
+  // { name: "Company", icon: "bi bi-buildings", route: "/company" },
   {
-    name: "User",
+    name: "User Management",
     icon: "bi bi-people",
-    route: "/user",
+    route: "/user-management",
   },
 ];
 

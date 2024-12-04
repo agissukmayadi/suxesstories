@@ -4,16 +4,21 @@
     <div class="row my-4 mt-1">
       <!-- Event Card -->
       <div class="col-md-6">
-        <div class="card shadow-sm bg-body-tertiary rounde border-0 mb-4" @click="handleCardClick">
-          <div class="card-body d-flex align-items-center justify-content-between">
+        <div
+          class="card shadow-sm bg-body-tertiary rounde border-0 mb-4"
+          @click="handleCardClick"
+        >
+          <div
+            class="card-body d-flex align-items-center justify-content-between"
+          >
             <div>
               <h5 class="card-title">Event</h5>
-              <h3 class="text-primary">189</h3>
-              <p class="text-muted">dari 50 perusahaan</p>
+              <h3 class="text-primary">{{ eventTotal }}</h3>
+              <p class="text-muted">dari {{ companyTotal }} perusahaan</p>
             </div>
             <div class="d-flex me-3">
               <div class="progress-circle text-primary">
-                <span>100+</span>
+                <span>{{ eventTotal }}</span>
               </div>
             </div>
           </div>
@@ -22,12 +27,14 @@
 
       <!-- Talent Card -->
       <div class="col-md-6">
-        <router-link to="/user" style="text-decoration: none;">
+        <router-link to="/user" style="text-decoration: none">
           <div class="card shadow-sm bg-body-tertiary rounded border-0">
-            <div class="card-body d-flex align-items-center justify-content-center text-center">
+            <div
+              class="card-body d-flex align-items-center justify-content-center text-center"
+            >
               <div>
                 <h5 class="card-title">Talent</h5>
-                <h3 class="text-success">50</h3>
+                <h3 class="text-success">{{ talentTotal }}</h3>
                 <p class="text-muted">Peserta</p>
               </div>
             </div>
@@ -37,22 +44,38 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" tabindex="-1" :class="{ show: showModal }"
-      :style="{ display: showModal ? 'block' : 'none', background: 'rgba(0, 0, 0, 0.5)' }">
+    <div
+      class="modal fade"
+      tabindex="-1"
+      :class="{ show: showModal }"
+      :style="{
+        display: showModal ? 'block' : 'none',
+        background: 'rgba(0, 0, 0, 0.5)',
+      }"
+    >
       <div class="modal-dialog modal-lg">
         <div class="modal-content p-4">
           <div class="modal-header">
             <h5 class="modal-title">Event Status</h5>
-            <button type="button" class="btn-close" @click="closeModal"></button>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closeModal"
+            ></button>
           </div>
 
           <!-- Event Status Cards -->
           <div class="row mb-4 mt-4">
             <!-- Not Started -->
             <div class="col-md-4">
-              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none;">
+              <div
+                class="card shadow-sm bg-body-tertiary rounded mb-3"
+                style="border: none"
+              >
                 <div class="card-body d-flex align-items-center">
-                  <div class="circle bg-danger d-flex justify-content-center align-items-center">
+                  <div
+                    class="circle bg-danger d-flex justify-content-center align-items-center"
+                  >
                     <i class="bi bi-person-dash-fill text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
@@ -65,9 +88,14 @@
 
             <!-- On Going -->
             <div class="col-md-4">
-              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none;">
+              <div
+                class="card shadow-sm bg-body-tertiary rounded mb-3"
+                style="border: none"
+              >
                 <div class="card-body d-flex align-items-center">
-                  <div class="circle bg-success d-flex justify-content-center align-items-center">
+                  <div
+                    class="circle bg-success d-flex justify-content-center align-items-center"
+                  >
                     <i class="bi bi-person-gear text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
@@ -80,9 +108,14 @@
 
             <!-- Done -->
             <div class="col-md-4">
-              <div class="card shadow-sm bg-body-tertiary rounded" style="border: none;">
+              <div
+                class="card shadow-sm bg-body-tertiary rounded"
+                style="border: none"
+              >
                 <div class="card-body d-flex align-items-center">
-                  <div class="circle bg-warning d-flex justify-content-center align-items-center">
+                  <div
+                    class="circle bg-warning d-flex justify-content-center align-items-center"
+                  >
                     <i class="bi bi-person-check-fill text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
@@ -99,15 +132,27 @@
             <div class="col-md-10">
               <div class="input-group">
                 <!-- Input Field -->
-                <input type="text" class="form-control" v-model="search" placeholder="Search" />
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="search"
+                  placeholder="Search"
+                />
                 <!-- Icon Search di sebelah kanan -->
-                <span class="input-group-text" style="background-color: #265c7f;">
+                <span
+                  class="input-group-text"
+                  style="background-color: #265c7f"
+                >
                   <i class="bi bi-search text-white"></i>
                 </span>
               </div>
             </div>
             <div class="col-md-2 d-flex">
-              <button class="btn btn-secondary" style="background-color: #265c7f;" @click="toggleFilter">
+              <button
+                class="btn btn-secondary"
+                style="background-color: #265c7f"
+                @click="toggleFilter"
+              >
                 <i class="bi bi-funnel"></i> Filter
               </button>
             </div>
@@ -116,7 +161,11 @@
           <!-- Filter Section -->
           <div v-if="showFilter" class="row mb-4">
             <div class="col-md-4">
-              <select class="form-select" id="selectEvent" v-model="selectedEvent">
+              <select
+                class="form-select"
+                id="selectEvent"
+                v-model="selectedEvent"
+              >
                 <option value="" disabled selected>Select Event</option>
                 <option value="Physics Happy Day">Physics Happy Day</option>
                 <option value="Women Strong">Women Strong</option>
@@ -133,11 +182,17 @@
               </select>
             </div>
             <div class="col-md-4">
-              <select class="form-select" id="selectCompany" v-model="selectedCompany">
+              <select
+                class="form-select"
+                id="selectCompany"
+                v-model="selectedCompany"
+              >
                 <option value="" disabled selected>Select Company</option>
                 <option value="PT. Cipta Semesta">PT. Cipta Semesta</option>
                 <option value="PT. Cipta Angkasa">PT. Cipta Angkasa</option>
-                <option value="Yayasan Peduli Lansia">Yayasan Peduli Lansia</option>
+                <option value="Yayasan Peduli Lansia">
+                  Yayasan Peduli Lansia
+                </option>
               </select>
             </div>
           </div>
@@ -159,20 +214,22 @@
                 <td>
                   <!-- Lingkaran warna dan teks status -->
                   <div class="d-flex align-items-center">
-                    <div class="circle" :style="{
-                      backgroundColor: getStatusColor(event.status),
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      marginRight: '10px',
-                    }"></div>
+                    <div
+                      class="circle"
+                      :style="{
+                        backgroundColor: getStatusColor(event.status),
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        marginRight: '10px',
+                      }"
+                    ></div>
                     <span class="text-black">{{ event.status }}</span>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-
         </div>
       </div>
     </div>
@@ -192,11 +249,18 @@
           <div class="card-body">
             <h5 class="card-title mt-4">Top 5 Event</h5>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item d-flex align-items-center bg-body-tertiary" v-for="event in topEvents"
-                :key="event.id">
+              <li
+                class="list-group-item d-flex align-items-center bg-body-tertiary"
+                v-for="event in topEvents"
+                :key="event.id"
+              >
                 <!-- Gambar kecil -->
-                <img src="../assets/img/poster.jpg" alt="Event Image" class="img-thumbnail me-3"
-                  style="width: 50px; height: 50px; object-fit: cover" />
+                <img
+                  src="../assets/img/poster.jpg"
+                  alt="Event Image"
+                  class="img-thumbnail me-3"
+                  style="width: 50px; height: 50px; object-fit: cover"
+                />
                 <!-- Detail Event -->
                 <div>
                   <strong>{{ event.title }}</strong>
@@ -212,30 +276,37 @@
     <!-- Daftar Event -->
     <div class="row">
       <div class="col-12 mt-4 card shadow-sm bg-body-tertiary rounded border-0">
-        <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+        <div
+          class="d-flex justify-content-between align-items-center mb-3 mt-3"
+        >
           <h5 class="mb-0">Daftar Event</h5>
-          <router-link to="/event">
-            <button class="btn" style="background-color: #265c7f; color: white; border: none">
+          <router-link to="/event/create">
+            <button
+              class="btn"
+              style="background-color: #265c7f; color: white; border: none"
+            >
               Add Event
             </button>
           </router-link>
         </div>
-        <div class="row">
-          <div class="col-md-4 mb-4" v-for="event in daftarEvent" :key="event.id">
-            <div class="card shadow-sm h-100">
-              <img :src="event.image" class="card-img-top" :alt="event.title" />
-              <div class="card-body">
-                <h5 class="card-title">{{ event.title }}</h5>
-                <p class="card-text">{{ event.description }}</p>
-                <button class="btn btn-primary btn-sm" @click="viewEvent(event.id)">
-                  View
-                </button>
-              </div>
+        <div class="row g-3">
+          <div
+            class="col-6 col-md-4 flex-shrink-0"
+            v-for="event in daftarEvent"
+            :key="event.id"
+          >
+            <div class="bg-white p-3 border rounded d-flex flex-column gap-2">
+              <h5>{{ event.name }}</h5>
+              <img src="../assets/img/poster.jpg" alt="" class="w-100" />
+              <p class="card-description">{{ event.description }}</p>
+              <button class="btn btn-detail">View</button>
             </div>
           </div>
         </div>
-        <router-link to="/event" style="text-decoration: none;">
-          <div class="d-flex justify-content-center align-items-center text-black mb-3">
+        <router-link to="/event" style="text-decoration: none">
+          <div
+            class="d-flex justify-content-center align-items-center text-black mb-3 mt-3"
+          >
             Lihat Selengkapnya
           </div>
         </router-link>
@@ -254,6 +325,16 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import {
+  getDocs,
+  collection,
+  getFirestore,
+  where,
+  query,
+  orderBy,
+  onSnapshot,
+  limit,
+} from "firebase/firestore";
 
 Chart.register(
   BarController,
@@ -267,37 +348,86 @@ Chart.register(
 export default {
   data() {
     return {
+      eventTotal: 0,
+      companyTotal: 0,
+      talentTotal: 0,
       chartInstance: null,
       showModal: false,
-      search: '',
+      search: "",
       showFilter: false, // To toggle the visibility of the filter
-      selectedEvent: '',
-      selectedTest: '',
-      selectedCompany: '',
+      selectedEvent: "",
+      selectedTest: "",
+      selectedCompany: "",
       events: [
-        { id: 1, name: "Physics Happy Day", company: "PT. Cipta Semesta", status: "Not Started" },
-        { id: 2, name: "Women Strong", company: "PT. Cipta Angkasa", status: "On Going" },
-        { id: 3, name: "Insights Quest", company: "Yayasan Peduli Lansia", status: "Done" },
-        { id: 4, name: "No Money", company: "Citra Abadi Resources", status: "On Going" },
-        { id: 5, name: "Happy Puppy", company: "PT. Cipta Semesta", status: "Not Started" },
+        {
+          id: 1,
+          name: "Physics Happy Day",
+          company: "PT. Cipta Semesta",
+          status: "Not Started",
+        },
+        {
+          id: 2,
+          name: "Women Strong",
+          company: "PT. Cipta Angkasa",
+          status: "On Going",
+        },
+        {
+          id: 3,
+          name: "Insights Quest",
+          company: "Yayasan Peduli Lansia",
+          status: "Done",
+        },
+        {
+          id: 4,
+          name: "No Money",
+          company: "Citra Abadi Resources",
+          status: "On Going",
+        },
+        {
+          id: 5,
+          name: "Happy Puppy",
+          company: "PT. Cipta Semesta",
+          status: "Not Started",
+        },
       ],
       topEvents: [
-        { id: 1, title: "Physics Happy Day", description: "An event about Physics", image: "../assets/img/poster.jpg" },
-        { id: 2, title: "Women Strong", description: "Empowering women", image: "../assets/img/poster.jpg" },
-        { id: 3, title: "Insights Quest", description: "A quest for insights", image: "../assets/img/poster.jpg" },
-        { id: 4, title: "No Money", description: "Event about financial literacy", image: "../assets/img/poster.jpg" },
-        { id: 5, title: "Happy Puppy", description: "A fun event for animal lovers", image: "../assets/img/poster.jpg" }
+        {
+          id: 1,
+          title: "Physics Happy Day",
+          description: "An event about Physics",
+          image: "../assets/img/poster.jpg",
+        },
+        {
+          id: 2,
+          title: "Women Strong",
+          description: "Empowering women",
+          image: "../assets/img/poster.jpg",
+        },
+        {
+          id: 3,
+          title: "Insights Quest",
+          description: "A quest for insights",
+          image: "../assets/img/poster.jpg",
+        },
+        {
+          id: 4,
+          title: "No Money",
+          description: "Event about financial literacy",
+          image: "../assets/img/poster.jpg",
+        },
+        {
+          id: 5,
+          title: "Happy Puppy",
+          description: "A fun event for animal lovers",
+          image: "../assets/img/poster.jpg",
+        },
       ],
-      daftarEvent: [
-        { id: 1, title: "Physics Happy Day", description: "Learn about the latest in Physics", image: "../assets/img/poster.jpg" },
-        { id: 2, title: "Women Strong", description: "Celebrate strong women", image: "../assets/img/poster.jpg" },
-        { id: 3, title: "Insights Quest", description: "A journey to gain valuable insights", image: "../assets/img/poster.jpg" }
-      ]
+      daftarEvent: [],
     };
   },
   computed: {
     filteredEvents() {
-      return this.events.filter(event => {
+      return this.events.filter((event) => {
         return (
           (!this.selectedEvent || event.name === this.selectedEvent) &&
           (!this.selectedTest || event.name.includes(this.selectedTest)) &&
@@ -321,8 +451,8 @@ export default {
       return status === "Not Started"
         ? "text-danger"
         : status === "On Going"
-          ? "text-success"
-          : "text-warning";
+        ? "text-success"
+        : "text-warning";
     },
     getStatusColor(status) {
       if (status === "Not Started") return "red";
@@ -330,20 +460,58 @@ export default {
       if (status === "Done") return "yellow";
       return "gray"; // Warna default
     },
-    renderChart() {
+    async renderChart() {
+      const db = getFirestore();
       if (this.chartInstance) {
         this.chartInstance.destroy();
       }
+
+      const eventsQuery = query(
+        collection(db, "events"),
+        orderBy("createdAt", "asc") // Urutkan berdasarkan waktu (ascending)
+      );
+      const querySnapshot = await getDocs(eventsQuery);
+
+      const eventData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      // Olah data untuk Chart.js
+      const labels = eventData.map((event) =>
+        new Date(event.createdAt.seconds * 1000).toLocaleString("en-US", {
+          month: "short",
+        })
+      );
+
+      // Hitung jumlah event per bulan
+      const eventCounts = Array(12).fill(0); // Array untuk menyimpan jumlah event per bulan
+      eventData.forEach((event) => {
+        const month = new Date(event.createdAt.seconds * 1000).getMonth();
+        eventCounts[month] += 1; // Tambahkan 1 ke bulan terkait
+      });
+
       this.chartInstance = new Chart(this.$refs.chartCanvas, {
         type: "bar",
         data: {
           labels: [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
           ],
           datasets: [
             {
               label: "Jumlah Event",
-              data: [60, 40, 50, 40, 35, 30, 55, 50, 40, 50, 40, 60],
+              data: eventCounts,
               backgroundColor: "#265C7F",
             },
           ],
@@ -365,8 +533,48 @@ export default {
     viewEvent(id) {
       console.log("View event with ID: ", id); // Just for testing
     },
+    async fetchEvents() {
+      const db = getFirestore();
+      try {
+        // Query untuk mengambil 3 data terakhir berdasarkan timestamp atau field tertentu
+        const eventsQuery = query(
+          collection(db, "events"),
+          orderBy("createdAt", "desc"), // Urutkan berdasarkan field createdAt secara descending
+          limit(3) // Ambil hanya 3 dokumen
+        );
+
+        const querySnapshot = await getDocs(eventsQuery);
+
+        // Map data ke daftarEvent
+        this.daftarEvent = querySnapshot.docs.map((doc) => ({
+          id: doc.id, // Menyertakan ID dokumen jika diperlukan
+          ...doc.data(),
+        }));
+
+        console.log(this.daftarEvent); // Debugging untuk memastikan data benar
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    },
   },
-  mounted() {
+  async mounted() {
+    const db = getFirestore();
+
+    const querySnapshotEvent = await getDocs(collection(db, "events"));
+    this.eventTotal = querySnapshotEvent.size;
+
+    const querySnapshotCompany = await getDocs(collection(db, "companies"));
+    this.companyTotal = querySnapshotCompany.size;
+
+    const talentQuery = query(
+      collection(db, "users"),
+      where("role", "==", "talent")
+    );
+    const querySnapshotTalent = await getDocs(talentQuery);
+    this.talentTotal = querySnapshotTalent.size;
+
+    this.fetchEvents();
+
     this.renderChart();
   },
   beforeDestroy() {
@@ -375,10 +583,14 @@ export default {
     }
   },
 };
-
 </script>
 
-<style>
+<style scoped>
+.btn-detail {
+  background-color: #285480;
+  color: white;
+  border: none;
+}
 .progress-circle {
   width: 80px;
   height: 80px;

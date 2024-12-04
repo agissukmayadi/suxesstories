@@ -1,54 +1,21 @@
 <template>
   <main class="qrcode-page p-4">
-    <h1>Talent</h1>
+    <h1>Daftar Users</h1>
 
-    <!-- Search and Filter Section -->
-    <div class="row mb-3">
-      <div class="col-md-10">
-        <div class="input-group">
-          <!-- Input Field -->
-          <input type="text" class="form-control" v-model="searchQuery" placeholder="Search" />
-          <!-- Icon Search di sebelah kanan -->
-          <span class="input-group-text" style="background-color: #265c7f;">
-            <i class="bi bi-search text-white"></i>
-          </span>
-        </div>
-      </div>
-      <div class="col-md-2 d-flex">
-        <button class="btn btn-secondary" style="background-color: #265c7f;" @click="toggleFilter">
-          <i class="bi bi-funnel"></i> Filter
-        </button>
-      </div>
+    <!-- Fitur Search -->
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
+        v-model="searchQuery"
+        placeholder="Cari user..."
+      />
     </div>
 
-    <!-- Filter Section -->
-    <div v-if="showFilter" class="row mb-4">
-      <div class="col-md-4">
-        <select class="form-select" v-model="selectedEvent">
-          <option value="" disabled selected>Select Event</option>
-          <option value="Physics Happy Day">Physics Happy Day</option>
-          <option value="Women Strong">Women Strong</option>
-          <option value="Insights Quest">Insights Quest</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <select class="form-select" v-model="selectedTest">
-          <option value="" disabled selected>Select Test</option>
-          <option value="Test 1">Negotiation Skill Test</option>
-          <option value="Test 2">CFIT 3</option>
-          <option value="Test 3">5pf Tipologi</option>
-          <option value="Test 3">Personality 5.0</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <select class="form-select" v-model="selectedCompany">
-          <option value="" disabled selected>Select Company</option>
-          <option value="PT. Cipta Semesta">PT. Cipta Semesta</option>
-          <option value="PT. Cipta Angkasa">PT. Cipta Angkasa</option>
-          <option value="Yayasan Peduli Lansia">Yayasan Peduli Lansia</option>
-        </select>
-      </div>
-    </div>
+    <!-- Tombol Tambah User -->
+    <button class="btn btn-primary mb-3" @click="showModal = true">
+      Tambah User
+    </button>
 
     <!-- Tabel Users -->
     <table class="table table-striped table-hover">
@@ -87,31 +54,58 @@
             <h5 class="modal-title">
               {{ currentUser.uid ? "Edit User" : "Tambah User" }}
             </h5>
-            <button type="button" class="btn-close" @click="closeModal"></button>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closeModal"
+            ></button>
           </div>
           <div class="modal-body">
             <form @submit.prevent="addUser">
               <div class="mb-3">
                 <label for="name" class="form-label">Nama</label>
-                <input type="text" id="name" v-model="currentUser.name" class="form-control" required />
+                <input
+                  type="text"
+                  id="name"
+                  v-model="currentUser.name"
+                  class="form-control"
+                  required
+                />
               </div>
               <div class="row">
                 <div class="col col-md-6">
                   <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" v-model="currentUser.email" class="form-control" required />
+                    <input
+                      type="email"
+                      id="email"
+                      v-model="currentUser.email"
+                      class="form-control"
+                      required
+                    />
                   </div>
                 </div>
                 <div class="col col-md-6">
                   <div class="mb-3">
                     <label for="phone" class="form-label">Telepon</label>
-                    <input type="text" id="phone" v-model="currentUser.phone" class="form-control" required />
+                    <input
+                      type="text"
+                      id="phone"
+                      v-model="currentUser.phone"
+                      class="form-control"
+                      required
+                    />
                   </div>
                 </div>
               </div>
               <div class="mb-3">
                 <label for="role" class="form-label">Role</label>
-                <select id="role" v-model="currentUser.role" class="form-control" required>
+                <select
+                  id="role"
+                  v-model="currentUser.role"
+                  class="form-control"
+                  required
+                >
                   <option value="" disabled>Pilih Role</option>
                   <option value="admin">Admin</option>
                   <option value="talent">Talent</option>
@@ -119,7 +113,13 @@
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" v-model="currentUser.password" class="form-control" required />
+                <input
+                  type="password"
+                  id="password"
+                  v-model="currentUser.password"
+                  class="form-control"
+                  required
+                />
               </div>
               <button type="submit" class="btn btn-primary">Simpan</button>
             </form>
@@ -129,11 +129,23 @@
     </div>
   </main>
 </template>
-
 <script>
 import { ref, onMounted, computed } from "vue";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, setDoc } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateCurrentUser,
+} from "firebase/auth";
 import Swal from "sweetalert2";
 
 export default {
@@ -151,38 +163,61 @@ export default {
       password: "",
     });
     const searchQuery = ref("");
-    const showFilter = ref(false);
-    const selectedEvent = ref("");
-    const selectedTest = ref("");
-    const selectedCompany = ref("");
 
-    // Fetch Users from Firestore
     const fetchUsers = async () => {
       const querySnapshot = await getDocs(collection(db, "users"));
-      users.value = querySnapshot.docs.map((doc) => doc.data());
+      users.value = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+      }));
     };
 
-    // Close modal and reset currentUser
     const closeModal = () => {
       showModal.value = false;
-      currentUser.value = { uid: null, name: "", email: "", phone: "", role: "", password: "" };
+      currentUser.value = {
+        uid: null,
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        password: "",
+      };
     };
 
-    // Add or update user
     const addUser = async () => {
       try {
+        const adminUser = auth.currentUser;
+
         if (currentUser.value.uid) {
-          // Update user
+          // Update user if UID exists
           const userDoc = doc(db, "users", currentUser.value.uid);
-          await updateDoc(userDoc, { ...currentUser.value });
+          await updateDoc(userDoc, {
+            name: currentUser.value.name,
+            email: currentUser.value.email,
+            phone: currentUser.value.phone,
+            role: currentUser.value.role,
+          });
           Swal.fire("Berhasil!", "User berhasil diperbarui", "success");
         } else {
           // Add new user
-          const userCredential = await createUserWithEmailAndPassword(auth, currentUser.value.email, currentUser.value.password);
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            currentUser.value.email,
+            currentUser.value.password
+          );
           const uid = userCredential.user.uid;
-          await setDoc(doc(db, "users", uid), { ...currentUser.value, uid });
+
+          await setDoc(doc(db, "users", uid), {
+            uid: uid,
+            name: currentUser.value.name,
+            email: currentUser.value.email,
+            phone: currentUser.value.phone,
+            role: currentUser.value.role,
+          });
           Swal.fire("Berhasil!", "User berhasil ditambahkan", "success");
         }
+
+        // Kembalikan sesi admin tanpa perlu login ulang
+        await updateCurrentUser(auth, adminUser);
 
         fetchUsers();
         closeModal();
@@ -191,7 +226,6 @@ export default {
       }
     };
 
-    // Delete user
     const deleteUser = async (uid) => {
       try {
         const userDoc = doc(db, "users", uid);
@@ -203,18 +237,16 @@ export default {
       }
     };
 
-    // Edit user
     const editUser = (user) => {
       currentUser.value = { ...user };
       showModal.value = true;
     };
 
-    // Computed for filtered users
     const filteredUsers = computed(() => {
       if (!searchQuery.value) {
         return users.value;
       }
-      return users.value.filter(user =>
+      return users.value.filter((user) =>
         Object.values(user)
           .join(" ")
           .toLowerCase()
@@ -222,12 +254,6 @@ export default {
       );
     });
 
-    // Toggle filter visibility
-    const toggleFilter = () => {
-      showFilter.value = !showFilter.value;
-    };
-
-    // Fetch users on mount
     onMounted(() => {
       fetchUsers();
     });
@@ -236,18 +262,13 @@ export default {
       users,
       showModal,
       currentUser,
-      searchQuery,
-      showFilter,
-      selectedEvent,
-      selectedTest,
-      selectedCompany,
       fetchUsers,
       closeModal,
       addUser,
       deleteUser,
       editUser,
+      searchQuery,
       filteredUsers,
-      toggleFilter,
     };
   },
 };
