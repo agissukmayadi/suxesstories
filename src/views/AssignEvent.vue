@@ -134,7 +134,15 @@
 <script setup>
 import { reactive, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  setDoc,
+} from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import axios from "axios";
 
 const route = useRoute();
 const form = reactive({
@@ -188,16 +196,42 @@ const formatRupiah = (amount) => {
 };
 
 onMounted(async () => {
-  const db = getFirestore();
   try {
-    const eventId = route.params.id;
+    const auth = getAuth();
+    const db = getFirestore();
 
+    // Monitor autentikasi pengguna
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("User is logged in:", user);
+
+        // Ambil data user dari koleksi Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+
+          // Isi form dengan data user
+          form.name = userData.name || "";
+          form.email = userData.email || "";
+          form.phone = userData.phone || "";
+        } else {
+          console.warn("User document does not exist in Firestore.");
+        }
+      } else {
+        console.warn("No user is logged in.");
+      }
+    });
+
+    const eventId = route.params.id;
     const eventDocRef = doc(db, "events", eventId);
     const eventDoc = await getDoc(eventDocRef);
 
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
       selectedEvent.id = eventDoc.id;
+      selectedEvent.companyId = eventData.companyId;
       selectedEvent.name = eventData.name;
       selectedEvent.description = eventData.description;
       selectedEvent.date = eventData.date;
@@ -205,6 +239,7 @@ onMounted(async () => {
       selectedEvent.amount = eventData.amount;
       selectedEvent.createdAt = eventData.createdAt;
       selectedEvent.qrCode = eventData.qrCode;
+      selectedEvent.tests = eventData.tests;
 
       const companyDocRef = doc(db, "companies", eventData.companyId);
       const companyDoc = await getDoc(companyDocRef);
@@ -241,42 +276,86 @@ onMounted(async () => {
   }
 });
 
+const addRegistration = async () => {
+  try {
+    const auth = getAuth();
+    const db = getFirestore();
+
+    // Ambil user login saat ini
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Anda harus login untuk mendaftar.");
+      return;
+    }
+
+    // Ambil ID event dari route
+    const eventId = selectedEvent.id;
+
+    // Siapkan data yang akan disimpan
+    const registrationData = {
+      uid: user.uid, // Referensi pengguna
+      eventId: eventId, // Referensi event
+      name: form.name,
+      email: form.email,
+      birthDate: form.birthDate,
+      city: form.city,
+      phone: form.phone,
+      gender: form.gender,
+      createdAt: new Date().toISOString(), // Waktu pendaftaran
+    };
+
+    // Simpan ke koleksi baru di Firestore
+    const registrationsRef = collection(db, "registrations");
+    await setDoc(doc(registrationsRef), registrationData);
+
+    alert("Pendaftaran berhasil!");
+    // Reset form jika diperlukan
+    Object.keys(form).forEach((key) => (form[key] = ""));
+  } catch (error) {
+    console.error("Error saat menyimpan data pendaftaran:", error);
+    alert("Terjadi kesalahan saat mendaftar. Silakan coba lagi.");
+  }
+};
+
 const submitForm = async () => {
-  // try {
-  //   const response = await fetch("http://localhost:3000/assign-event", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       event: selectedEvent,
-  //       company: selectedCompany,
-  //       tests: selectedTests,
-  //       form: form,
-  //     }),
-  //   });
-  //   if (response.data.token) {
-  //     window.snap.pay(response.data.token, {
-  //       onSuccess: function (result) {
-  //         alert("Payment success!");
-  //         console.log(result);
-  //       },
-  //       onPending: function (result) {
-  //         alert("Payment pending!");
-  //         console.log(result);
-  //       },
-  //       onError: function (result) {
-  //         alert("Payment failed!");
-  //         console.log(result);
-  //       },
-  //     });
-  //   } else {
-  //     alert(response.data.message);
-  //   }
-  // } catch (error) {
-  //   console.error("Error:", error);
-  //   alert("An error occurred. Please try again later.");
-  // }
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/assign-event",
+      {
+        event: selectedEvent,
+        tests: selectedTests,
+        form: form,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(response.data);
+    if (response.data.paymentToken) {
+      window.snap.pay(response.data.paymentToken, {
+        onSuccess: function (result) {
+          console.log(result);
+          addRegistration();
+        },
+        onPending: function (result) {
+          alert("Payment pending!");
+          console.log(result);
+        },
+        onError: function (result) {
+          alert("Payment failed!");
+          console.log(result);
+        },
+      });
+    } else {
+      addRegistration();
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("An error occurred. Please try again later.");
+  }
 };
 </script>
 

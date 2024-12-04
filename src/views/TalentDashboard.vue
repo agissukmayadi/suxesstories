@@ -54,16 +54,14 @@ export default {
 
       html5QrCode
         .start(
-          { facingMode: "environment" }, // Gunakan kamera belakang
+          { facingMode: "environment" }, 
           {
-            fps: 10, // Frame per detik
+            fps: 10, 
           },
           (decodedText, decodedResult) => {
-            // Dijalankan saat QR code berhasil dipindai
-            window.location.href = decodedText; // Redirect ke URL yang dipindai
+            window.location.href = decodedText; 
           },
           (errorMessage) => {
-            // Dijalankan jika gagal mendeteksi QR code
             this.qrCodeError = "Gagal mendeteksi QR Code, coba lagi!";
           }
         )
