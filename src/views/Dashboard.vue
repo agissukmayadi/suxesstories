@@ -18,7 +18,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- Talent Card -->
@@ -34,10 +33,7 @@
             </div>
           </div>
         </router-link>
-
-
       </div>
-
     </div>
 
     <!-- Modal -->
@@ -128,11 +124,12 @@
               </select>
             </div>
             <div class="col-md-4">
-              <select class="form-select" id="selectTest" v-model="selectedTest">
+              <select class="form-select" v-model="selectedTest">
                 <option value="" disabled selected>Select Test</option>
-                <option value="Test 1">Test 1</option>
-                <option value="Test 2">Test 2</option>
-                <option value="Test 3">Test 3</option>
+                <option value="Test 1">Negotiation Skill Test</option>
+                <option value="Test 2">CFIT 3</option>
+                <option value="Test 3">5pf Tipologi</option>
+                <option value="Test 3">Personality 5.0</option>
               </select>
             </div>
             <div class="col-md-4">
@@ -147,13 +144,13 @@
 
           <!-- Table Section -->
           <table class="table table-bordered table-striped">
-           <thead class="text-white text-center">
-            <tr>
-              <th>Event</th>
-              <th>Company</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+            <thead class="text-white text-center">
+              <tr>
+                <th>Event</th>
+                <th>Company</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
             <tbody>
               <tr v-for="event in filteredEvents" :key="event.id">
@@ -242,8 +239,6 @@
             Lihat Selengkapnya
           </div>
         </router-link>
-
-
       </div>
     </div>
   </div>
