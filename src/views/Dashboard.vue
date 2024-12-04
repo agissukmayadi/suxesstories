@@ -4,7 +4,7 @@
     <div class="row my-4 mt-1">
       <!-- Event Card -->
       <div class="col-md-6">
-        <div class="card shadow-sm bg-body-tertiary rounde border-0" @click="handleCardClick">
+        <div class="card shadow-sm bg-body-tertiary rounde border-0 mb-4" @click="handleCardClick">
           <div class="card-body d-flex align-items-center justify-content-between">
             <div>
               <h5 class="card-title">Event</h5>
@@ -18,27 +18,26 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- Talent Card -->
       <div class="col-md-6">
         <router-link to="/user" style="text-decoration: none;">
           <div class="card shadow-sm bg-body-tertiary rounded border-0">
-            <div class="card-body d-flex align-items-center justify-content-between">
+            <div class="card-body d-flex align-items-center justify-content-center text-center">
               <div>
                 <h5 class="card-title">Talent</h5>
-                <h3 class="text-success">220</h3>
+                <h3 class="text-success">50</h3>
                 <p class="text-muted">Peserta</p>
-              </div>
-              <div class="d-flex me-3">
-                <div class="progress-circle text-success">
-                  <span>200+</span>
-                </div>
               </div>
             </div>
           </div>
         </router-link>
+
+
       </div>
+
     </div>
 
     <!-- Modal -->
@@ -55,7 +54,7 @@
           <div class="row mb-4 mt-4">
             <!-- Not Started -->
             <div class="col-md-4">
-              <div class="card shadow-sm bg-body-tertiary rounded" style="border: none;">
+              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none;">
                 <div class="card-body d-flex align-items-center">
                   <div class="circle bg-danger d-flex justify-content-center align-items-center">
                     <i class="bi bi-person-dash-fill text-white fs-3"></i>
@@ -70,7 +69,7 @@
 
             <!-- On Going -->
             <div class="col-md-4">
-              <div class="card shadow-sm bg-body-tertiary rounded" style="border: none;">
+              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none;">
                 <div class="card-body d-flex align-items-center">
                   <div class="circle bg-success d-flex justify-content-center align-items-center">
                     <i class="bi bi-person-gear text-white fs-3"></i>
@@ -106,13 +105,13 @@
                 <!-- Input Field -->
                 <input type="text" class="form-control" v-model="search" placeholder="Search" />
                 <!-- Icon Search di sebelah kanan -->
-                <span class="input-group-text">
-                  <i class="bi bi-search"></i>
+                <span class="input-group-text" style="background-color: #265c7f;">
+                  <i class="bi bi-search text-white"></i>
                 </span>
               </div>
             </div>
             <div class="col-md-2 d-flex">
-              <button class="btn btn-secondary" @click="toggleFilter">
+              <button class="btn btn-secondary" style="background-color: #265c7f;" @click="toggleFilter">
                 <i class="bi bi-funnel"></i> Filter
               </button>
             </div>
@@ -147,15 +146,15 @@
           </div>
 
           <!-- Table Section -->
-          <!-- Table Section -->
           <table class="table table-bordered table-striped">
-            <thead class="bg-primary text-white text-center">
-              <tr>
-                <th>Event</th>
-                <th>Company</th>
-                <th>Status</th>
-              </tr>
-            </thead>
+           <thead class="text-white text-center">
+            <tr>
+              <th>Event</th>
+              <th>Company</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
             <tbody>
               <tr v-for="event in filteredEvents" :key="event.id">
                 <td>{{ event.name }}</td>
@@ -176,6 +175,7 @@
               </tr>
             </tbody>
           </table>
+
         </div>
       </div>
     </div>
@@ -242,6 +242,8 @@
             Lihat Selengkapnya
           </div>
         </router-link>
+
+
       </div>
     </div>
   </div>
