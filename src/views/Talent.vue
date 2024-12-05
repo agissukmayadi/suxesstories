@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-4 ">
+    <div class="container py-4">
         <h3>Talent</h3>
 
         <!-- Search and Filter Section -->
@@ -8,38 +8,39 @@
                 <div class="input-group">
                     <!-- Input Field -->
                     <input type="text" class="form-control" v-model="search" placeholder="Search" />
-                    <!-- Icon Search -->
-                    <span class="input-group-text">
+                    <!-- Icon Search di sebelah kanan -->
+                    <span class="input-group-text" style="background-color: #265c7f">
                         <i class="bi bi-search text-white"></i>
                     </span>
                 </div>
             </div>
             <div class="col-md-2 d-flex">
-                <button class="btn btn-1" @click="toggleFilter">
+                <button class="btn btn-secondary" style="background-color: #265c7f" @click="toggleFilter">
                     <i class="bi bi-funnel"></i> Filter
                 </button>
             </div>
         </div>
 
+
         <!-- Filter Section -->
         <div v-if="showFilter" class="row mb-4">
-            <div class="col-md-4">
-                <select class="form-select" v-model="selectedEvent">
+            <div class="col-12 col-md-4">
+                <select class="form-select mb-2" v-model="selectedEvent">
                     <option value="" disabled selected>Select Event</option>
                     <option value="Physics Happy Day">Physics Happy Day</option>
                     <option value="Women Strong">Women Strong</option>
                     <option value="Insights Quest">Insights Quest</option>
                 </select>
             </div>
-            <div class="col-md-4">
-                <select class="form-select" v-model="selectedTest">
+            <div class="col-12 col-md-4">
+                <select class="form-select mb-2" v-model="selectedTest">
                     <option value="" disabled selected>Select Test</option>
                     <option value="Negotiation Skill Test">Negotiation Skill Test</option>
                     <option value="CFIT 3">CFIT 3</option>
                     <option value="5pf Tipologi">5pf Tipologi</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <select class="form-select" v-model="selectedCompany">
                     <option value="" disabled selected>Select Company</option>
                     <option value="PT. Cipta Semesta">PT. Cipta Semesta</option>
@@ -50,38 +51,41 @@
         </div>
 
         <!-- Talent Table -->
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Event</th>
-                    <th>Test</th>
-                    <th>Download</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="talent in filteredTalents" :key="talent.email">
-                    <td>{{ talent.name }}</td>
-                    <td>{{ talent.email }}</td>
-                    <td>{{ talent.event }}</td>
-                    <td>
-                        <a href="#" @click.prevent="showTestModal(talent)" class="text" style="color:#265c7f ;">
-                            Lihat Hasil Test
-                        </a>
-                    </td>
-                    <td>
-                        <button class="btn btn-link text" style="color:#265c7f ;" @click="showDownloadModal(talent)">
-                            Download
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Event</th>
+                        <th>Test</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="talent in filteredTalents" :key="talent.email">
+                        <td>{{ talent.name }}</td>
+                        <td>{{ talent.email }}</td>
+                        <td>{{ talent.event }}</td>
+                        <td>
+                            <a href="#" @click.prevent="showTestModal(talent)" class="text" style="color:#265c7f;">
+                                Lihat Hasil Test
+                            </a>
+                        </td>
+                        <td>
+                            <button class="btn btn-link text" style="color:#265c7f;" @click="showDownloadModal(talent)">
+                                Download
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
 
         <!-- Test Modal -->
         <div class="modal fade" id="testModal" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header btn-primary text-white">
                         <h5 class="modal-title">Hasil test</h5>
@@ -105,7 +109,7 @@
 
         <!-- Download Modal -->
         <div class="modal fade" id="downloadModal" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header btn-primary text-white">
                         <h5 class="modal-title">Download</h5>
