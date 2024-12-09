@@ -3,7 +3,7 @@
     <!-- Cek apakah event ditemukan -->
     <div v-if="eventNotFound">
       <h4 class="text-center text-danger">
-        Event Not Found or Event Date is Over
+        {{ eventNotFoundMessage }}
       </h4>
     </div>
     <div v-else>
@@ -186,6 +186,7 @@ const selectedCompany = reactive({
 const selectedTests = reactive([]);
 
 const eventNotFound = ref(false);
+const eventNotFoundMessage = ref("");
 
 const formatRupiah = (amount) => {
   return new Intl.NumberFormat("id-ID", {
@@ -265,11 +266,20 @@ onMounted(async () => {
       }
 
       const eventDate = new Date(eventData.date);
+      eventDate.setHours(23);
+      eventDate.setMinutes(59);
+      eventDate.setSeconds(59);
+      eventDate.setMilliseconds(999);
+      
       const currentDate = new Date();
+      console.log(eventData.date);
+      console.log(currentDate);
       if (eventDate < currentDate) {
+        eventNotFoundMessage.value = "Event sudah ditutup.";
         eventNotFound.value = true;
       }
     } else {
+      eventNotFoundMessage.value = "Event tidak ditemukan.";
       eventNotFound.value = true;
     }
   } catch (error) {
