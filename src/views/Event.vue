@@ -99,6 +99,11 @@
                 </div>
               </div>
             </div>
+            <div class="d-flex flex-column g-0 mt-3">
+  <p class="mb-1 fw-semibold">Survey ID</p>
+  <small>{{ selectedEvent.surveyId || 'Tidak ada Survey ID' }}</small>
+</div>
+
             <div class="modal-footer">
               <button
                 type="button"
@@ -365,36 +370,38 @@ export default {
 
     // Menampilkan detail event dan mengambil data company serta test terkait
     async viewselectedEvent(event) {
-      this.selectedEvent = event; // Menyalin data event ke dalam selectedEvent
-      this.showModal = true; // Menampilkan modal
+  this.selectedEvent = event; // Menyalin data event ke dalam selectedEvent
+  this.showModal = true; // Menampilkan modal
 
-      const eventRef = doc(db, "events", event.id);
-      const eventDoc = await getDoc(eventRef);
-      if (eventDoc.exists()) {
-        this.selectedEvent = eventDoc.data();
-      }
+  const eventRef = doc(db, "events", event.id);
+  const eventDoc = await getDoc(eventRef);
+  if (eventDoc.exists()) {
+    this.selectedEvent = eventDoc.data();
+    // Pastikan surveyId tersedia di selectedEvent
+    console.log('Survey ID:', this.selectedEvent.surveyId);  // Menampilkan surveyId di console
+  }
 
-      const companyRef = doc(db, "companies", event.companyId);
-      const companyDoc = await getDoc(companyRef);
-      if (companyDoc.exists()) {
-        this.selectedCompany = companyDoc.data();
-      }
+  const companyRef = doc(db, "companies", event.companyId);
+  const companyDoc = await getDoc(companyRef);
+  if (companyDoc.exists()) {
+    this.selectedCompany = companyDoc.data();
+  }
 
-      if (this.selectedEvent.tests && this.selectedEvent.tests.length > 0) {
-        const testsCollection = collection(db, "tests");
-        const q = query(
-          testsCollection,
-          where(documentId(), "in", this.selectedEvent.tests)
-        );
-        const querySnapshot = await getDocs(q);
+  if (this.selectedEvent.tests && this.selectedEvent.tests.length > 0) {
+    const testsCollection = collection(db, "tests");
+    const q = query(
+      testsCollection,
+      where(documentId(), "in", this.selectedEvent.tests)
+    );
+    const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-          this.selectedTests = querySnapshot.docs.map((doc) => doc.data());
-        } else {
-          this.selectedTests = [];
-        }
-      }
-    },
+    if (!querySnapshot.empty) {
+      this.selectedTests = querySnapshot.docs.map((doc) => doc.data());
+    } else {
+      this.selectedTests = [];
+    }
+  }
+},
 
     async updateEvent() {
       try {
@@ -409,6 +416,7 @@ export default {
           payment: this.selectedEvent.payment,
           amount: this.selectedEvent.amount,
           results: this.selectedEvent.results,
+          surveyId: this.selectedEvent.surveyId, 
         });
 
         Swal.fire("Sukses", "Event berhasil diperbarui", "success").then(() => {
