@@ -131,9 +131,13 @@ import {
   getFirestore,
   setDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import Swal from "sweetalert2";
 import QRCode from "qrcode";
+import axios from "axios";
+
+const db = getFirestore();
 
 export default {
   data() {
@@ -169,18 +173,75 @@ export default {
         console.error("Error fetching companies:", error);
       }
     },
-    async fetchTests() {
-      try {
-        const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "tests"));
-        this.tests = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-      } catch (error) {
-        console.error("Error fetching tests:", error);
+    async fetchTestsFromLimeSurvey() {
+  try {
+    const baseURL = "https://test.suxesstories.com";
+    const username = "intern";
+    const password = "Surabaya2024!?#";
+
+    // Dapatkan session key dari LimeSurvey
+    const sessionKeyResponse = await axios.post(`${baseURL}/admin/remotecontrol`, {
+      method: "get_session_key",
+      params: [username, password],
+      id: 1,
+    });
+
+    const sessionKey = sessionKeyResponse.data.result;
+
+    // Ambil daftar survei dari LimeSurvey
+    const surveysResponse = await axios.post(`${baseURL}/admin/remotecontrol`, {
+      method: "list_surveys",
+      params: [sessionKey],
+      id: 2,
+    });
+
+    const surveys = surveysResponse.data.result;
+
+    // Filter survei aktif
+    const activeSurveys = surveys.filter((survey) => survey.active === "Y");
+
+    // Simpan survei ke Firestore
+    const testsCollection = collection(db, "tests"); // Gunakan koleksi Firebase yang sesuai
+
+    for (const survey of activeSurveys) {
+      const newTestRef = doc(testsCollection, survey.sid); // Gunakan `sid` sebagai ID dokumen
+      const testDoc = await getDoc(newTestRef);
+
+      if (!testDoc.exists()) {
+        await setDoc(newTestRef, {
+          idSurvey: survey.sid,
+          title: survey.surveyls_title,
+          description: survey.surveyls_description || "",
+          active: true, // Hanya tes aktif yang masuk
+        });
+
+        console.log(`Tes aktif disimpan: ${survey.surveyls_title}`);
+      } else {
+        console.log(`Tes sudah ada: ${survey.surveyls_title}`);
       }
-    },
+    }
+
+    // Update state dengan data tes aktif
+    this.tests = activeSurveys.map((survey) => ({
+      id: survey.sid, // Sesuaikan ID dengan checkbox di template
+      title: survey.surveyls_title,
+    }));
+
+    console.log("Tes aktif disimpan ke state:", this.tests);
+
+    // Lepaskan session key dari LimeSurvey
+    await axios.post(`${baseURL}/admin/remotecontrol`, {
+      method: "release_session_key",
+      params: [sessionKey],
+      id: 3,
+    });
+
+    console.log("Session key berhasil dilepaskan");
+  } catch (error) {
+    console.error("Error fetching tests from LimeSurvey:", error);
+    Swal.fire("Error", "Gagal mengambil data tes dari LimeSurvey.", "error");
+  }
+},
     async submitForm() {
       try {
         const db = getFirestore();
@@ -234,7 +295,7 @@ export default {
   },
   mounted() {
     this.fetchCompanies();
-    this.fetchTests();
+    this.fetchTestsFromLimeSurvey();
 
     const urlDate = this.$route.query.date;
     if (urlDate) {

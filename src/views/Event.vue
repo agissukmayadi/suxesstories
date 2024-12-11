@@ -151,7 +151,6 @@
                   <div class="mb-3">
                     <label for="companyId" class="form-label">Perusahaan</label>
                     <select
-                      type="text"
                       id="companyId"
                       v-model="selectedEvent.companyId"
                       class="form-select"
@@ -190,22 +189,24 @@
                     />
                   </div>
                   <div class="mb-3">
-              <label class="form-label">Pilih Test</label>
-             <div class="row g-2">
-         <div class="col-3" v-for="test in tests" :key="test.id">
-      <div class="form-check">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          :id="test.id"
-          :value="test.id"
-          v-model="selectedEvent.tests"
-        />
-        <label class="form-check-label" :for="test.id">{{ test.title }}</label>
+                    <label class="form-label">Pilih Test</label>
+                    <div class="row g-2">
+                      <div class="col-3" v-for="test in tests" :key="test.id">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :id="test.id"
+                            :value="test.id"
+                            v-model="selectedEvent.tests"
+                          />
+                          <label class="form-check-label" :for="test.id">
+                            {{ test.title }}
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </div>
-               </div>
-             </div>
                   <div class="mb-3">
                     <label class="form-label">Hasil Test</label>
                     <div class="mb-2">
@@ -305,7 +306,6 @@ import {
   documentId,
   updateDoc,
 } from "firebase/firestore";
-import axios from "axios";
 import QRCode from "qrcode";
 import Swal from "sweetalert2";
 
@@ -338,49 +338,15 @@ export default {
       }
     },
 
-    async fetchTestsFromLimeSurvey() {
+    async fetchTests() {
       try {
-        // Konfigurasi LimeSurvey API
-        const baseURL = "https://test.suxesstories.com";
-        const username = "intern";
-        const password = "Surabaya2024!?#";
-
-        // Mendapatkan session key
-        const sessionKeyResponse = await axios.post(`${baseURL}/admin/remotecontrol`, {
-          method: "get_session_key",
-          params: [username, password],
-          id: 1,
-        });
-
-        const sessionKey = sessionKeyResponse.data.result;
-
-        // Mendapatkan daftar survei
-        const surveysResponse = await axios.post(`${baseURL}/admin/remotecontrol`, {
-          method: "list_surveys",
-          params: [sessionKey],
-          id: 2,
-        });
-
-        const surveys = surveysResponse.data.result;
-
-        // Filter hanya survei aktif
-        const activeSurveys = surveys.filter((survey) => survey.active === "Y");
-
-        // Simpan survei aktif sebagai daftar tes
-        this.tests = activeSurveys.map((survey) => ({
-          id: survey.sid, // ID survei
-          title: survey.surveyls_title, // Judul survei
+        const querySnapshot = await getDocs(collection(db, "tests"));
+        this.tests = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
         }));
-
-        // Hapus session key setelah selesai
-        await axios.post(`${baseURL}/admin/remotecontrol`, {
-          method: "release_session_key",
-          params: [sessionKey],
-          id: 3,
-        });
       } catch (error) {
-        console.error("Error fetching tests from LimeSurvey:", error);
-        Swal.fire("Error", "Gagal mengambil data tes dari LimeSurvey.", "error");
+        console.error("Error fetching tests:", error);
       }
     },
 
@@ -511,7 +477,7 @@ export default {
   },
   mounted() {
     this.fetchEvents();
-    this.fetchTestsFromLimeSurvey(); // Ambil data tes dari LimeSurvey
+    this.fetchTests();
     this.fetchCompanies();
   },
 };
@@ -540,18 +506,12 @@ export default {
 }
 
 .card-description {
-  display: -webkit-box;               /* Untuk WebKit browser seperti Safari */
-  -webkit-box-orient: vertical;       /* Mengatur orientasi box menjadi vertikal untuk WebKit */
-  -webkit-line-clamp: 2;              /* Membatasi teks menjadi 2 baris untuk WebKit */
-  overflow: hidden;                   /* Menyembunyikan teks yang lebih panjang dari 2 baris */
-  text-overflow: ellipsis;            /* Menambahkan elipsis di akhir teks terpotong */
-  
-  display: box;                       /* Standar untuk browser non-WebKit */
-  box-orient: vertical;               /* Mengatur orientasi box menjadi vertikal untuk browser lainnya */
-  line-clamp: 2;                      /* Membatasi teks menjadi 2 baris untuk browser lain */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* Membatasi teks menjadi 2 baris */
+  overflow: hidden; /* Menyembunyikan teks yang lebih panjang dari 2 baris */
+  text-overflow: ellipsis; /* Menambahkan elipsis di akhir teks yang terpotong */
 }
-
-
 
 .modal {
   position: fixed;
