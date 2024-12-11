@@ -137,6 +137,7 @@ import Swal from "sweetalert2";
 import QRCode from "qrcode";
 import axios from "axios";
 
+
 const db = getFirestore();
 
 export default {
@@ -201,10 +202,10 @@ export default {
     const activeSurveys = surveys.filter((survey) => survey.active === "Y");
 
     // Simpan survei ke Firestore
-    const testsCollection = collection(db, "tests"); // Gunakan koleksi Firebase yang sesuai
+    const testsCollection = collection(db, "tests"); 
 
     for (const survey of activeSurveys) {
-      const newTestRef = doc(testsCollection, survey.sid); // Gunakan `sid` sebagai ID dokumen
+      const newTestRef = doc(testsCollection, survey.sid); 
       const testDoc = await getDoc(newTestRef);
 
       if (!testDoc.exists()) {
