@@ -62,24 +62,25 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Pilih Test</label>
-        <div class="row g-2">
-          <div class="col-3" v-for="test in tests" :key="test.id">
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                :id="test.id"
-                :value="test.id"
-                v-model="form.tests"
-              />
-              <label class="form-check-label" :for="test.id">
-                {{ test.title }}
-              </label>
-            </div>
-          </div>
-        </div>
+  <label class="form-label">Pilih Test</label>
+  <div class="row g-2">
+    <div class="col-3" v-for="test in tests" :key="test.id">
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          :id="test.id"
+          :value="test.id"
+          v-model="form.tests"
+        />
+        <label class="form-check-label" :for="test.id">
+          {{ test.title }}
+        </label>
       </div>
+    </div>
+  </div>
+</div>
+
 
       <div class="mb-3">
         <label class="form-label">Hasil Test</label>
@@ -174,73 +175,32 @@ export default {
         console.error("Error fetching companies:", error);
       }
     },
-    async fetchTestsFromLimeSurvey() {
+    async fetchTestsAndSurveys() {
   try {
-    const baseURL = "https://test.suxesstories.com";
-    const username = "intern";
-    const password = "Surabaya2024!?#";
+    const [testsSnapshot, surveysResponse] = await Promise.all([
+      getDocs(collection(db, "tests")), // Ambil data tes dari Firestore
+      axios.post("http://localhost:5000/api/fetch-surveys"), // Ambil survei dari backend
+    ]);
 
-    // Dapatkan session key dari LimeSurvey
-    const sessionKeyResponse = await axios.post(`${baseURL}/admin/remotecontrol`, {
-      method: "get_session_key",
-      params: [username, password],
-      id: 1,
-    });
-
-    const sessionKey = sessionKeyResponse.data.result;
-
-    // Ambil daftar survei dari LimeSurvey
-    const surveysResponse = await axios.post(`${baseURL}/admin/remotecontrol`, {
-      method: "list_surveys",
-      params: [sessionKey],
-      id: 2,
-    });
-
-    const surveys = surveysResponse.data.result;
-
-    // Filter survei aktif
-    const activeSurveys = surveys.filter((survey) => survey.active === "Y");
-
-    // Simpan survei ke Firestore
-    const testsCollection = collection(db, "tests"); 
-
-    for (const survey of activeSurveys) {
-      const newTestRef = doc(testsCollection, survey.sid); 
-      const testDoc = await getDoc(newTestRef);
-
-      if (!testDoc.exists()) {
-        await setDoc(newTestRef, {
-          idSurvey: survey.sid,
-          title: survey.surveyls_title,
-          description: survey.surveyls_description || "",
-          active: true, // Hanya tes aktif yang masuk
-        });
-
-        console.log(`Tes aktif disimpan: ${survey.surveyls_title}`);
-      } else {
-        console.log(`Tes sudah ada: ${survey.surveyls_title}`);
-      }
-    }
-
-    // Update state dengan data tes aktif
-    this.tests = activeSurveys.map((survey) => ({
-      id: survey.sid, // Sesuaikan ID dengan checkbox di template
-      title: survey.surveyls_title,
+    // Proses hasil tests
+    this.tests = testsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
     }));
 
-    console.log("Tes aktif disimpan ke state:", this.tests);
+    // Proses hasil surveys
+    if (surveysResponse.data && surveysResponse.data.savedSurveys) {
+      this.tests = this.tests.concat(
+        surveysResponse.data.savedSurveys.map((survey) => ({
+          id: survey.idSurvey,
+          title: survey.title,
+        }))
+      );
+    }
 
-    // Lepaskan session key dari LimeSurvey
-    await axios.post(`${baseURL}/admin/remotecontrol`, {
-      method: "release_session_key",
-      params: [sessionKey],
-      id: 3,
-    });
-
-    console.log("Session key berhasil dilepaskan");
+    console.log("Tests and Surveys fetched successfully:", this.tests);
   } catch (error) {
-    console.error("Error fetching tests from LimeSurvey:", error);
-    Swal.fire("Error", "Gagal mengambil data tes dari LimeSurvey.", "error");
+    console.error("Error fetching tests and surveys:", error);
   }
 },
     async submitForm() {
@@ -296,7 +256,7 @@ export default {
   },
   mounted() {
     this.fetchCompanies();
-    this.fetchTestsFromLimeSurvey();
+    this.fetchTestsAndSurveys();
 
     const urlDate = this.$route.query.date;
     if (urlDate) {
