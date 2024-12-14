@@ -27,7 +27,7 @@
 
       <!-- Talent Card -->
       <div class="col-md-6">
-        <router-link to="/user" style="text-decoration: none">
+        <router-link to="/talent" style="text-decoration: none">
           <div class="card shadow-sm bg-body-tertiary rounded border-0">
             <div
               class="card-body d-flex align-items-center justify-content-center text-center"
@@ -159,43 +159,31 @@
           </div>
 
           <!-- Filter Section -->
-          <div v-if="showFilter" class="row mb-4">
-            <div class="col-md-4">
-              <select
-                class="form-select"
-                id="selectEvent"
-                v-model="selectedEvent"
-              >
-                <option value="" disabled selected>Select Event</option>
-                <option value="Physics Happy Day">Physics Happy Day</option>
-                <option value="Women Strong">Women Strong</option>
-                <option value="Insights Quest">Insights Quest</option>
-              </select>
+           <div v-if="showFilter" class="row mb-4">
+            <div class="col-sm-6">
+                <p class="mb-1">Selected Event</p>
+                <select class="form-select" v-model="selectedEvent">
+                    <option value="Physics Happy Day">Physics Happy Day</option>
+                    <option value="Women Strong">Women Strong</option>
+                    <option value="Insights Quest">Insights Quest</option>
+                </select>
             </div>
-            <div class="col-md-4">
-              <select class="form-select" v-model="selectedTest">
-                <option value="" disabled selected>Select Test</option>
-                <option value="Test 1">Negotiation Skill Test</option>
-                <option value="Test 2">CFIT 3</option>
-                <option value="Test 3">5pf Tipologi</option>
-                <option value="Test 3">Personality 5.0</option>
-              </select>
+            <div class="col-sm-6">
+                <p class="mb-1">Selected Test</p>
+                <select class="form-select" v-model="selectedTest">
+                    <option value="5pf tipologi">5pf tipologi</option>
+                    <option value="CFIT 3">CFIT 3</option>
+                    <option value="Negotiation Skill Test">Negotiaton Skill Test</option>
+                    <option value="Achievement Motivation Profile">Achievement Motivation Profile</option>
+                    <option value="Goal Setting Test">Goal Setting Test</option>
+                    <option value="Scholastic Aptitudes Questionnaire">Scholastic Aptitudes Questionnaire</option>
+                    <option value="Personality 5.0">Personality 5.0</option>
+                    <option value="Creative Problem Solving">Creative Problem Solving</option>
+                    <option value="Emotional Intelligence Test">Emotional Intelligence Test</option>
+                    <option value="Teaching Style Profile">Teaching Style Profile</option>
+                </select>
             </div>
-            <div class="col-md-4">
-              <select
-                class="form-select"
-                id="selectCompany"
-                v-model="selectedCompany"
-              >
-                <option value="" disabled selected>Select Company</option>
-                <option value="PT. Cipta Semesta">PT. Cipta Semesta</option>
-                <option value="PT. Cipta Angkasa">PT. Cipta Angkasa</option>
-                <option value="Yayasan Peduli Lansia">
-                  Yayasan Peduli Lansia
-                </option>
-              </select>
-            </div>
-          </div>
+        </div>
 
           <!-- Table Section -->
           <table class="table table-bordered table-striped">
