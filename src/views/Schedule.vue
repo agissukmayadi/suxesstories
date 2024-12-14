@@ -1,13 +1,13 @@
 <template>
   <div class="">
-    <div
-      class="d-flex flex-column flex-md-row justify-content-between align-items-center"
-    >
-      <h1>Schedule</h1>
-      <button class="btn btn-primary btn-save color-primary">Add Event</button>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+      <h3>Schedule</h3>
+      <router-link to="/event/create" style="text-decoration: none">
+        <button class="btn btn-primary btn-save color-primary">Add Event</button>
+      </router-link>
     </div>
     <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
-      <h3>{{ currentMonth }} {{ currentYear }}</h3>
+      <h4>{{ currentMonth }} {{ currentYear }}</h4>
       <div>
         <button class="btn btn-outline-secondary me-2" @click="prevMonth">
           «
@@ -30,32 +30,20 @@
         </thead>
         <tbody>
           <tr v-for="(week, index) in weeks" :key="index">
-            <td
-              v-for="day in week"
-              :key="day"
-              class="position-relative"
-              :class="{
-                'table-active': isToday(day),
-              }"
-              @click="
+            <td v-for="day in week" :key="day" class="position-relative" :class="{
+              'table-active': isToday(day),
+            }" @click="
                 day && (isToday(day) || isFuture(day)) && goToCreateEvent(day)
-              "
-              :style="{
+                " :style="{
                 cursor: day && (isToday(day) || isFuture(day)) ? 'pointer' : '',
-              }"
-            >
+              }">
               <span v-if="day">{{ day }}</span>
               <ul class="list-unstyled mt-2">
-                <li
-                  v-for="event in eventsByDate(day)"
-                  :key="event.id"
-                  class="badge d-block mb-1"
-                  :class="{
-                    'bg-danger': isPastEvent(event.date),
-                    'bg-success': isTodayEvent(event.date),
-                    'color-primary': isFutureEvent(event.date),
-                  }"
-                >
+                <li v-for="event in eventsByDate(day)" :key="event.id" class="badge d-block mb-1" :class="{
+                  'bg-danger': isPastEvent(event.date),
+                  'bg-success': isTodayEvent(event.date),
+                  'color-primary': isFutureEvent(event.date),
+                }">
                   {{ event.name }}
                 </li>
               </ul>
@@ -252,14 +240,19 @@ export default {
 }
 
 table {
-  table-layout: fixed; /* Pastikan tabel menggunakan lebar tetap */
-  width: 100%; /* Sesuaikan agar tabel memanfaatkan lebar penuh */
+  table-layout: fixed;
+  /* Pastikan tabel menggunakan lebar tetap */
+  width: 100%;
+  /* Sesuaikan agar tabel memanfaatkan lebar penuh */
 }
 
 td {
-  width: 14.28%; /* 100% dibagi 7 (jumlah hari dalam seminggu) */
-  word-wrap: break-word; /* Pecah kata jika terlalu panjang */
-  vertical-align: top; /* Atur agar konten berada di atas */
+  width: 14.28%;
+  /* 100% dibagi 7 (jumlah hari dalam seminggu) */
+  word-wrap: break-word;
+  /* Pecah kata jika terlalu panjang */
+  vertical-align: top;
+  /* Atur agar konten berada di atas */
 }
 
 .color-primary {
