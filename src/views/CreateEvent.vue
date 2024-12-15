@@ -5,24 +5,6 @@
     </h4>
     <form @submit.prevent="submitForm">
       <div class="mb-3">
-        <label for="company" class="form-label">Perusahaan</label>
-        <select
-          id="company"
-          class="form-select"
-          v-model="form.companyId"
-          required
-        >
-          <option
-            v-for="company in companies"
-            :key="company.id"
-            :value="company.id"
-          >
-            {{ company.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="mb-3">
         <label for="name" class="form-label">Nama Event</label>
         <input
           type="text"
@@ -62,25 +44,24 @@
       </div>
 
       <div class="mb-3">
-  <label class="form-label">Pilih Test</label>
-  <div class="row g-2">
-    <div class="col-3" v-for="test in tests" :key="test.id">
-      <div class="form-check">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          :id="test.id"
-          :value="test.id"
-          v-model="form.tests"
-        />
-        <label class="form-check-label" :for="test.id">
-          {{ test.title }}
-        </label>
+        <label class="form-label">Pilih Test</label>
+        <div class="row g-2">
+          <div class="col-3" v-for="test in tests" :key="test.id">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                :id="test.id"
+                :value="test.id"
+                v-model="form.tests"
+              />
+              <label class="form-check-label" :for="test.id">
+                {{ test.title }}
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-
 
       <div class="mb-3">
         <label class="form-label">Hasil Test</label>
@@ -138,71 +119,56 @@ import Swal from "sweetalert2";
 import QRCode from "qrcode";
 import axios from "axios";
 
-
 const db = getFirestore();
 
 export default {
   data() {
     return {
       form: {
-        companyId: "",
         name: "",
         description: "",
         image: null,
         date: "",
         tests: [],
-        payment: false,
+        payment: true,
         amount: null,
         results: {
           company: true,
           talent: false,
         },
       },
-      companies: [], // Data perusahaan
       tests: [], // Data test
     };
   },
   methods: {
-    async fetchCompanies() {
+    async fetchTestsAndSurveys() {
       try {
-        const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "companies"));
-        this.companies = querySnapshot.docs.map((doc) => ({
+        const [testsSnapshot, surveysResponse] = await Promise.all([
+          getDocs(collection(db, "tests")), // Ambil data tes dari Firestore
+          axios.post("http://localhost:5000/api/fetch-surveys"), // Ambil survei dari backend
+        ]);
+
+        // Proses hasil tests
+        this.tests = testsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        // Proses hasil surveys
+        if (surveysResponse.data && surveysResponse.data.savedSurveys) {
+          this.tests = this.tests.concat(
+            surveysResponse.data.savedSurveys.map((survey) => ({
+              id: survey.idSurvey,
+              title: survey.title,
+            }))
+          );
+        }
+
+        console.log("Tests and Surveys fetched successfully:", this.tests);
       } catch (error) {
-        console.error("Error fetching companies:", error);
+        console.error("Error fetching tests and surveys:", error);
       }
     },
-    async fetchTestsAndSurveys() {
-  try {
-    const [testsSnapshot, surveysResponse] = await Promise.all([
-      getDocs(collection(db, "tests")), // Ambil data tes dari Firestore
-      axios.post("http://localhost:5000/api/fetch-surveys"), // Ambil survei dari backend
-    ]);
-
-    // Proses hasil tests
-    this.tests = testsSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    // Proses hasil surveys
-    if (surveysResponse.data && surveysResponse.data.savedSurveys) {
-      this.tests = this.tests.concat(
-        surveysResponse.data.savedSurveys.map((survey) => ({
-          id: survey.idSurvey,
-          title: survey.title,
-        }))
-      );
-    }
-
-    console.log("Tests and Surveys fetched successfully:", this.tests);
-  } catch (error) {
-    console.error("Error fetching tests and surveys:", error);
-  }
-},
     async submitForm() {
       try {
         const db = getFirestore();
@@ -239,7 +205,6 @@ export default {
     },
     resetForm() {
       this.form = {
-        companyId: "",
         name: "",
         description: "",
         image: null,
@@ -255,7 +220,6 @@ export default {
     },
   },
   mounted() {
-    this.fetchCompanies();
     this.fetchTestsAndSurveys();
 
     const urlDate = this.$route.query.date;

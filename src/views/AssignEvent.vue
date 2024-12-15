@@ -7,34 +7,6 @@
       </h4>
     </div>
     <div v-else>
-      <div style="display: none">
-        <h4>{{ selectedEvent.name }}</h4>
-        <p>{{ selectedEvent.description }}</p>
-        <p><strong>Event Date:</strong> {{ selectedEvent.date }}</p>
-
-        <div v-if="selectedCompany.name">
-          <h5>Company Information:</h5>
-          <p><strong>Name:</strong> {{ selectedCompany.name }}</p>
-          <p><strong>Email:</strong> {{ selectedCompany.email }}</p>
-          <!-- Display other company info -->
-        </div>
-
-        <div v-if="selectedTests.length">
-          <h5>Tests for the Event:</h5>
-          <ul>
-            <li v-for="(test, index) in selectedTests" :key="index">
-              {{ test.name }} - {{ test.description }}
-            </li>
-          </ul>
-        </div>
-
-        <p>
-          Payment :
-          {{
-            selectedEvent.payment ? formatRupiah(selectedEvent.amount) : "Rp. 0"
-          }}
-        </p>
-      </div>
       <form
         @submit.prevent="submitForm"
         class="bg-light p-4 rounded border mx-auto"
@@ -158,7 +130,6 @@ const form = reactive({
 
 const selectedEvent = reactive({
   id: null,
-  companyId: null,
   name: null,
   description: null,
   date: null,
@@ -169,19 +140,6 @@ const selectedEvent = reactive({
   qrCode: null,
 });
 
-const selectedCompany = reactive({
-  id: null,
-  name: null,
-  email: null,
-  phone: null,
-  address: null,
-  website: null,
-  socialMedia: {
-    tiktok: null,
-    instagram: null,
-    linkedin: null,
-  },
-});
 
 const selectedTests = reactive([]);
 
@@ -234,7 +192,6 @@ onMounted(async () => {
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
       selectedEvent.id = eventDoc.id;
-      selectedEvent.companyId = eventData.companyId;
       selectedEvent.name = eventData.name;
       selectedEvent.description = eventData.description;
       selectedEvent.date = eventData.date;
@@ -243,19 +200,6 @@ onMounted(async () => {
       selectedEvent.createdAt = eventData.createdAt;
       selectedEvent.qrCode = eventData.qrCode;
       selectedEvent.tests = eventData.tests;
-
-      const companyDocRef = doc(db, "companies", eventData.companyId);
-      const companyDoc = await getDoc(companyDocRef);
-      if (companyDoc.exists()) {
-        const companyData = companyDoc.data();
-        selectedCompany.id = companyDoc.id;
-        selectedCompany.name = companyData.name;
-        selectedCompany.email = companyData.email;
-        selectedCompany.phone = companyData.phone;
-        selectedCompany.address = companyData.address;
-        selectedCompany.website = companyData.website;
-        selectedCompany.socialMedia = companyData.socialMedia;
-      }
 
       for (const testId of eventData.tests) {
         const testDocRef = doc(db, "tests", testId);

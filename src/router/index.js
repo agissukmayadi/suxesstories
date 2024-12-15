@@ -40,24 +40,8 @@ const router = createRouter({
       },
     },
     {
-      path: "/company",
-      component: () => import("../views/Company.vue"),
-      meta: {
-        requiresAuth: true,
-        requiresRole: ["admin"],
-      },
-    },
-    {
       path: "/talent",
       component: () => import("../views/Talent.vue"),
-      meta: {
-        requiresAuth: true,
-        requiresRole: ["admin"],
-      },
-    },
-    {
-      path: "/company/edit/:id",
-      component: () => import("../views/CompanyEdit.vue"),
       meta: {
         requiresAuth: true,
         requiresRole: ["admin"],
@@ -157,7 +141,7 @@ router.beforeEach((to, from, next) => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         const userRole = userData.role;
-        
+
         if (requiresRole.includes(userRole)) {
           next();
         } else {

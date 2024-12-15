@@ -40,12 +40,7 @@
             <div class="modal-body">
               <img src="../assets/img/poster.jpg" class="w-100" alt="" />
 
-              <div class="d-flex flex-column g-0 mt-3">
-                <p class="mb-1 fw-semibold">Perusahaan</p>
-                <small>{{
-                  selectedCompany ? selectedCompany.name : "-"
-                }}</small>
-              </div>
+             
 
               <div class="d-flex flex-column g-0 mt-3">
                 <p class="mb-1 fw-semibold">Tanggal</p>
@@ -148,23 +143,7 @@
                       required
                     />
                   </div>
-                  <div class="mb-3">
-                    <label for="companyId" class="form-label">Perusahaan</label>
-                    <select
-                      id="companyId"
-                      v-model="selectedEvent.companyId"
-                      class="form-select"
-                      required
-                    >
-                      <option
-                        v-for="company in companies"
-                        :key="company.id"
-                        :value="company.id"
-                      >
-                        {{ company.name }}
-                      </option>
-                    </select>
-                  </div>
+                  
                   <div class="mb-3">
                     <label for="description" class="form-label"
                       >Deskripsi</label
@@ -316,12 +295,10 @@ export default {
     return {
       events: [],
       tests: [],
-      companies: [],
       showModal: false,
       showModalEdit: false,
       showModalQRCode: false,
       selectedEvent: {},
-      selectedCompany: {},
       selectedTests: [],
     };
   },
@@ -350,17 +327,6 @@ export default {
       }
     },
 
-    async fetchCompanies() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "companies"));
-        this.companies = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-      } catch (error) {
-        console.error("Error fetching companies:", error);
-      }
-    },
 
     // Menampilkan detail event dan mengambil data company serta test terkait
     async viewselectedEvent(event) {
@@ -373,11 +339,6 @@ export default {
         this.selectedEvent = eventDoc.data();
       }
 
-      const companyRef = doc(db, "companies", event.companyId);
-      const companyDoc = await getDoc(companyRef);
-      if (companyDoc.exists()) {
-        this.selectedCompany = companyDoc.data();
-      }
 
       if (this.selectedEvent.tests && this.selectedEvent.tests.length > 0) {
         const testsCollection = collection(db, "tests");
@@ -401,7 +362,6 @@ export default {
         await updateDoc(eventRef, {
           name: this.selectedEvent.name,
           description: this.selectedEvent.description,
-          companyId: this.selectedEvent.companyId,
           // image: this.selectedEvent.image,
           date: this.selectedEvent.date,
           tests: this.selectedEvent.tests,
@@ -415,7 +375,6 @@ export default {
 
           // Reset form
           this.selectedEvent = {};
-          this.selectedCompany = {};
           this.selectedTests = [];
 
           // Refresh data
@@ -478,7 +437,6 @@ export default {
   mounted() {
     this.fetchEvents();
     this.fetchTests();
-    this.fetchCompanies();
   },
 };
 </script>
