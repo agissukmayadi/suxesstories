@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard container">
+  <div class="dashboard vh-100">
     <!-- Statistik -->
     <div class="row my-4 mt-1">
       <!-- Event Card -->
