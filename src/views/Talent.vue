@@ -1,5 +1,5 @@
 <template>
-    <div class="talent container">
+    <div class="talent vh-100">
         <h3>Talent</h3>
 
         <!-- Search and Filter Section -->
