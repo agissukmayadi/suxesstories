@@ -154,7 +154,6 @@ export default {
           ...doc.data(),
         }));
 
-        // Proses hasil surveys
         if (surveysResponse.data && surveysResponse.data.savedSurveys) {
           this.tests = this.tests.concat(
             surveysResponse.data.savedSurveys.map((survey) => ({

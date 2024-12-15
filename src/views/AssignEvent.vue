@@ -209,6 +209,8 @@ onMounted(async () => {
         }
       }
 
+      console.log("Selected Tests:", selectedTests);
+
       const eventDate = new Date(eventData.date);
       eventDate.setHours(23);
       eventDate.setMinutes(59);
@@ -265,11 +267,14 @@ const addRegistration = async () => {
     await setDoc(doc(registrationsRef), registrationData);
 
     const response = await axios.post(
-      "http://localhost:5000/api/email-event",
+      "http://localhost:5000/api/assign-survey",
       {
-        name: form.name,
-        tests: selectedTests,
-        email: form.email,
+        eventName : selectedEvent.name,
+        participant : {
+          name : form.name,
+          email : form.email
+        },
+        surveys: selectedTests,
       },
       {
         headers: {
