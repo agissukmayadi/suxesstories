@@ -197,7 +197,7 @@ onMounted(async () => {
   color: white;
 }
 .hamburger-btn {
-  position: fixed;
+  position: absolute;
   top: 10px;
   left: 10px;
   z-index: 1100;
