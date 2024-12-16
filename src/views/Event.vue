@@ -40,8 +40,6 @@
             <div class="modal-body">
               <img src="../assets/img/poster.jpg" class="w-100" alt="" />
 
-             
-
               <div class="d-flex flex-column g-0 mt-3">
                 <p class="mb-1 fw-semibold">Tanggal</p>
                 <small>{{ formatDate(selectedEvent.date) }}</small>
@@ -109,6 +107,7 @@
               >
                 Kode QR
               </button>
+              <button type="button" class="btn btn-save">Hasil Test</button>
             </div>
           </div>
         </div>
@@ -143,7 +142,7 @@
                       required
                     />
                   </div>
-                  
+
                   <div class="mb-3">
                     <label for="description" class="form-label"
                       >Deskripsi</label
@@ -327,7 +326,6 @@ export default {
       }
     },
 
-
     // Menampilkan detail event dan mengambil data company serta test terkait
     async viewselectedEvent(event) {
       this.selectedEvent = event; // Menyalin data event ke dalam selectedEvent
@@ -338,7 +336,6 @@ export default {
       if (eventDoc.exists()) {
         this.selectedEvent = eventDoc.data();
       }
-
 
       if (this.selectedEvent.tests && this.selectedEvent.tests.length > 0) {
         const testsCollection = collection(db, "tests");
