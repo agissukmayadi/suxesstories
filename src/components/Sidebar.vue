@@ -88,7 +88,7 @@ const talentMenuItems = [
     icon: "bi bi-person",
     route: "/talent-dashboard",
   },
-  { name: "QR Code", icon: "bi bi-qr-code", route: "/qrcode" },
+  //{ name: "QR Code", icon: "bi bi-qr-code", route: "/qrcode" },
   { name: "Form Data", icon: "bi bi-file-earmark", route: "/formdata" },
   { name: "Payment", icon: "bi bi-credit-card", route: "/payment" },
 ];
