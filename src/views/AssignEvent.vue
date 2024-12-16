@@ -140,7 +140,6 @@ const selectedEvent = reactive({
   qrCode: null,
 });
 
-
 const selectedTests = reactive([]);
 
 const eventNotFound = ref(false);
@@ -216,7 +215,7 @@ onMounted(async () => {
       eventDate.setMinutes(59);
       eventDate.setSeconds(59);
       eventDate.setMilliseconds(999);
-      
+
       const currentDate = new Date();
       console.log(eventData.date);
       console.log(currentDate);
@@ -236,43 +235,13 @@ onMounted(async () => {
 
 const addRegistration = async () => {
   try {
-    const auth = getAuth();
-    const db = getFirestore();
-
-    // Ambil user login saat ini
-    const user = auth.currentUser;
-    if (!user) {
-      alert("Anda harus login untuk mendaftar.");
-      return;
-    }
-
-    // Ambil ID event dari route
-    const eventId = selectedEvent.id;
-
-    // Siapkan data yang akan disimpan
-    const registrationData = {
-      uid: user.uid, // Referensi pengguna
-      eventId: eventId, // Referensi event
-      name: form.name,
-      email: form.email,
-      birthDate: form.birthDate,
-      city: form.city,
-      phone: form.phone,
-      gender: form.gender,
-      createdAt: new Date().toISOString(), // Waktu pendaftaran
-    };
-
-    // Simpan ke koleksi baru di Firestore
-    const registrationsRef = collection(db, "registrations");
-    await setDoc(doc(registrationsRef), registrationData);
-
     const response = await axios.post(
       "http://localhost:5000/api/assign-survey",
       {
-        eventName : selectedEvent.name,
-        participant : {
-          name : form.name,
-          email : form.email
+        eventName: selectedEvent.name,
+        participant: {
+          name: form.name,
+          email: form.email,
         },
         surveys: selectedTests,
       },
@@ -284,6 +253,50 @@ const addRegistration = async () => {
     );
 
     if (response.status === 200) {
+      const { tokens } = response.data;
+      console.log("Tokens:", tokens);
+
+      const auth = getAuth();
+      const db = getFirestore();
+
+      // Ambil user login saat ini
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Anda harus login untuk mendaftar.");
+        return;
+      }
+
+      // Ambil ID event dari route
+      const eventId = selectedEvent.id;
+
+      // Siapkan data yang akan disimpan
+      const registrationData = {
+        uid: user.uid, // Referensi pengguna
+        event: {
+          id: eventId, // Referensi event
+          name: selectedEvent.name,
+        }, // Referensi event
+        tests: selectedTests.map((test, index) => ({
+          idSurvey: test.idSurvey,
+          title: test.title,
+          token: tokens[test.idSurvey], // Tambahkan token untuk setiap survei
+        })),
+        name: form.name,
+        email: form.email,
+        birthDate: form.birthDate,
+        city: form.city,
+        phone: form.phone,
+        gender: form.gender,
+        createdAt: new Date().toISOString(), // Waktu pendaftaran
+      };
+
+      console.log(registrationData);
+
+      // Simpan ke koleksi baru di Firestore
+      const registrationsRef = collection(db, "registrations");
+      await setDoc(doc(registrationsRef), registrationData);
+
+      // Redirect ke halaman success
       router.push("/success");
     }
 
