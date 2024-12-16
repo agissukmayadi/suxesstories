@@ -25,12 +25,23 @@ import Navbar from "./components/Navbar.vue";
 
 .app {
   display: flex;
-  width: 100%; /* Pastikan .app mengambil seluruh lebar */
+  width: 100%; 
 }
 
 .content {
-  flex-grow: 1; /* Pastikan konten mengambil sisa ruang yang tersedia */
+  flex-grow: 1; 
   padding: 20px;
-  /* Sesuaikan padding jika diperlukan */
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 5px; 
+  }
 }
 </style>
