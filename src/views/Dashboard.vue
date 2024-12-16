@@ -14,7 +14,7 @@
             <div>
               <h5 class="card-title">Event</h5>
               <h3 class="text-primary">{{ eventTotal }}</h3>
-              <p class="text-muted">dari {{ companyTotal }} perusahaan</p>
+              <p class="text-muted">Acara Jobfair</p>
             </div>
             <div class="d-flex me-3">
               <div class="progress-circle text-primary">
@@ -79,7 +79,7 @@
                     <i class="bi bi-person-dash-fill text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
-                    <h4>15</h4>
+                    <h4>{{ notStartedEventCount }}</h4>
                     <p>Not Started</p>
                   </div>
                 </div>
@@ -99,7 +99,7 @@
                     <i class="bi bi-person-gear text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
-                    <h4>15</h4>
+                    <h4>{{ onGoingEventCount }}</h4>
                     <p>On Going</p>
                   </div>
                 </div>
@@ -119,7 +119,7 @@
                     <i class="bi bi-person-check-fill text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
-                    <h4>15</h4>
+                    <h4>{{ doneEventCount }}</h4>
                     <p>Done</p>
                   </div>
                 </div>
@@ -159,38 +159,30 @@
           </div>
 
           <!-- Filter Section -->
-           <div v-if="showFilter" class="row mb-4">
+          <div v-if="showFilter" class="row mb-4">
             <div class="col-sm-6">
-                <p class="mb-1">Selected Event</p>
-                <select class="form-select" v-model="selectedEvent">
-                    <option value="Physics Happy Day">Physics Happy Day</option>
-                    <option value="Women Strong">Women Strong</option>
-                    <option value="Insights Quest">Insights Quest</option>
-                </select>
+              <p class="mb-1">Selected Event</p>
+              <select class="form-select" v-model="selectedEvent">
+                <option value="Physics Happy Day">Physics Happy Day</option>
+                <option value="Women Strong">Women Strong</option>
+                <option value="Insights Quest">Insights Quest</option>
+              </select>
             </div>
             <div class="col-sm-6">
-                <p class="mb-1">Selected Test</p>
-                <select class="form-select" v-model="selectedTest">
-                    <option value="5pf tipologi">5pf tipologi</option>
-                    <option value="CFIT 3">CFIT 3</option>
-                    <option value="Negotiation Skill Test">Negotiaton Skill Test</option>
-                    <option value="Achievement Motivation Profile">Achievement Motivation Profile</option>
-                    <option value="Goal Setting Test">Goal Setting Test</option>
-                    <option value="Scholastic Aptitudes Questionnaire">Scholastic Aptitudes Questionnaire</option>
-                    <option value="Personality 5.0">Personality 5.0</option>
-                    <option value="Creative Problem Solving">Creative Problem Solving</option>
-                    <option value="Emotional Intelligence Test">Emotional Intelligence Test</option>
-                    <option value="Teaching Style Profile">Teaching Style Profile</option>
-                </select>
+              <p class="mb-1">Selected Test</p>
+              <select class="form-select" v-model="selectedTest">
+                <option v-for="test in tests" :key="test.id" :value="test.id">
+                  {{ test.title }}
+                </option>
+              </select>
             </div>
-        </div>
+          </div>
 
           <!-- Table Section -->
           <table class="table table-bordered table-striped">
             <thead class="text-white text-center">
               <tr>
                 <th>Event</th>
-                <th>Company</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -198,7 +190,6 @@
             <tbody>
               <tr v-for="event in filteredEvents" :key="event.id">
                 <td>{{ event.name }}</td>
-                <td>{{ event.company }}</td>
                 <td>
                   <!-- Lingkaran warna dan teks status -->
                   <div class="d-flex align-items-center">
@@ -251,7 +242,7 @@
                 />
                 <!-- Detail Event -->
                 <div>
-                  <strong>{{ event.title }}</strong>
+                  <strong>{{ event.name }}</strong>
                   <p class="text-muted">{{ event.description }}</p>
                 </div>
               </li>
@@ -339,6 +330,9 @@ export default {
       eventTotal: 0,
       companyTotal: 0,
       talentTotal: 0,
+      onGoingEventCount: 0,
+      doneEventCount: 0,
+      notStartedEventCount: 0,
       chartInstance: null,
       showModal: false,
       search: "",
@@ -346,70 +340,9 @@ export default {
       selectedEvent: "",
       selectedTest: "",
       selectedCompany: "",
-      events: [
-        {
-          id: 1,
-          name: "Physics Happy Day",
-          company: "PT. Cipta Semesta",
-          status: "Not Started",
-        },
-        {
-          id: 2,
-          name: "Women Strong",
-          company: "PT. Cipta Angkasa",
-          status: "On Going",
-        },
-        {
-          id: 3,
-          name: "Insights Quest",
-          company: "Yayasan Peduli Lansia",
-          status: "Done",
-        },
-        {
-          id: 4,
-          name: "No Money",
-          company: "Citra Abadi Resources",
-          status: "On Going",
-        },
-        {
-          id: 5,
-          name: "Happy Puppy",
-          company: "PT. Cipta Semesta",
-          status: "Not Started",
-        },
-      ],
-      topEvents: [
-        {
-          id: 1,
-          title: "Physics Happy Day",
-          description: "An event about Physics",
-          image: "../assets/img/poster.jpg",
-        },
-        {
-          id: 2,
-          title: "Women Strong",
-          description: "Empowering women",
-          image: "../assets/img/poster.jpg",
-        },
-        {
-          id: 3,
-          title: "Insights Quest",
-          description: "A quest for insights",
-          image: "../assets/img/poster.jpg",
-        },
-        {
-          id: 4,
-          title: "No Money",
-          description: "Event about financial literacy",
-          image: "../assets/img/poster.jpg",
-        },
-        {
-          id: 5,
-          title: "Happy Puppy",
-          description: "A fun event for animal lovers",
-          image: "../assets/img/poster.jpg",
-        },
-      ],
+      events: [],
+      tests: [],
+      topEvents: [],
       daftarEvent: [],
     };
   },
@@ -418,7 +351,7 @@ export default {
       return this.events.filter((event) => {
         return (
           (!this.selectedEvent || event.name === this.selectedEvent) &&
-          (!this.selectedTest || event.name.includes(this.selectedTest)) &&
+          (!this.selectedTest || event.tests.includes(this.selectedTest)) &&
           (!this.selectedCompany || event.company === this.selectedCompany) &&
           (!this.search || event.name.includes(this.search))
         );
@@ -543,6 +476,108 @@ export default {
       } catch (error) {
         console.error("Error fetching events:", error);
       }
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "events"));
+        const currentDate = new Date(); // Tanggal dan waktu saat ini
+        const currentDateString = currentDate.toISOString().split("T")[0]; // Formatkan ke YYYY-MM-DD
+
+        const rawData = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          const eventDate = data.date; // Asumsi `date` adalah string dalam format "YYYY-MM-DD"
+
+          // Tentukan status berdasarkan perbandingan tanggal
+          let status;
+          if (eventDate > currentDateString) {
+            status = "Not Started";
+          } else if (eventDate === currentDateString) {
+            status = "On Going";
+          } else {
+            status = "Done";
+          }
+
+          return {
+            id: doc.id,
+            ...data,
+            status,
+          };
+        });
+
+        this.events = rawData;
+        this.notStartedEventCount = rawData.filter(
+          (event) => event.status === "Not Started"
+        ).length;
+        this.onGoingEventCount = rawData.filter(
+          (event) => event.status === "On Going"
+        ).length;
+        this.doneEventCount = rawData.filter(
+          (event) => event.status === "Done"
+        ).length;
+        console.log(this.events);
+      } catch (error) {
+        console.error("Error fetching events: ", error);
+      }
+    },
+
+    async fetchTests() {
+      const db = getFirestore();
+      try {
+        const querySnapshot = await getDocs(collection(db, "tests"));
+        const rawData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        this.tests = rawData;
+
+        console.log(this.tests);
+      } catch {
+        console.error("Error fetching tests: ", error);
+      }
+    },
+
+    async fetchTopEvents() {
+      const db = getFirestore();
+
+      const registrationsRef = collection(db, "registrations");
+      const registrationsSnapshot = await getDocs(registrationsRef);
+
+      // Membuat objek untuk menghitung jumlah registrasi per event_id
+      const eventCount = {};
+
+      registrationsSnapshot.forEach((doc) => {
+        const eventId = doc.data().event.id;
+        if (eventCount[eventId]) {
+          eventCount[eventId] += 1;
+        } else {
+          eventCount[eventId] = 1;
+        }
+      });
+
+      // Ambil 5 event teratas berdasarkan jumlah pendaftaran
+      const topEventIds = Object.entries(eventCount)
+        .sort((a, b) => b[1] - a[1]) // Urutkan berdasarkan jumlah registrasi terbanyak
+        .slice(0, 5) // Ambil 5 event teratas
+        .map((entry) => entry[0]); // Ambil hanya event_id
+
+      // Ambil data untuk setiap event yang teratas
+      const eventsRef = collection(db, "events");
+      const topEvents = [];
+
+      for (const eventId of topEventIds) {
+        const eventQuery = query(eventsRef, where("id", "==", eventId));
+        const eventSnapshot = await getDocs(eventQuery);
+
+        eventSnapshot.forEach((doc) => {
+          topEvents.push({
+            id: doc.data().id,
+            ...doc.data(),
+            registrationsCount: eventCount[eventId],
+          });
+        });
+      }
+
+      this.topEvents = topEvents;
     },
   },
   async mounted() {
@@ -562,6 +597,8 @@ export default {
     this.talentTotal = querySnapshotTalent.size;
 
     this.fetchEvents();
+    this.fetchTests();
+    this.fetchTopEvents();
 
     this.renderChart();
   },

@@ -191,13 +191,39 @@ export default {
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
-    downloadPDF(talent) {
-      const content = `Talent Information\n\nName: ${talent.name}\nEvent: ${talent.event}\nTest: ${talent.test}\nEmail: ${talent.email}\nPhone: ${talent.phone}\nBirthdate: ${talent.birthdate}\nCity: ${talent.city}\nGender: ${talent.gender}`;
-      const blob = new Blob([content], { type: "application/pdf" });
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `${talent.name}_info.pdf`;
-      link.click();
+    async downloadPDF(talent) {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/download-survey",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              surveyId: talent.testId,
+              token: talent.testToken,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          console.error("Failed to download survey:", error.error);
+          alert("Failed to download survey: " + error.error);
+          return;
+        }
+
+        // Ambil data file
+        const blob = await response.blob();
+
+        // Buat elemen untuk memulai download
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `${talent.name}_survey_${talent.testId}.json`;
+        link.click();
+      } catch (error) {
+        console.error("Error downloading survey:", error);
+        alert("An error occurred while downloading the survey.");
+      }
     },
   },
   created() {
