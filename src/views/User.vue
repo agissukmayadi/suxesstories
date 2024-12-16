@@ -1,54 +1,55 @@
 <template>
   <main class="qrcode-page p-4">
-    <h1>Daftar Users</h1>
+    <h3 class="mb-4">Daftar Users</h3>
 
-    <!-- Fitur Search -->
-    <div class="mb-3">
+    <!-- Fitur Search dan Tombol Tambah User -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
       <input
         type="text"
-        class="form-control"
+        class="form-control me-2 mb-2 mb-md-0"
         v-model="searchQuery"
         placeholder="Cari user..."
+        style="flex: 1;"
       />
+      <button class="btn btn-1 ms-2" @click="showModal = true">
+        Tambah User
+      </button>
     </div>
 
-    <!-- Tombol Tambah User -->
-    <button class="btn btn-primary mb-3" @click="showModal = true">
-      Tambah User
-    </button>
-
     <!-- Tabel Users -->
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>Nama</th>
-          <th>Email</th>
-          <th>Telepon</th>
-          <th>Role</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in filteredUsers" :key="user.uid">
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.phone }}</td>
-          <td>{{ user.role }}</td>
-          <td>
-            <button class="btn btn-primary me-2 btn-sm" @click="editUser(user)">
-              Edit
-            </button>
-            <button class="btn btn-danger btn-sm" @click="deleteUser(user.uid)">
-              Hapus
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Telepon</th>
+            <th>Role</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in filteredUsers" :key="user.uid">
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+              <button class="btn btn-1 me-2 btn-sm" @click="editUser(user)">
+                Edit
+              </button>
+              <button class="btn btn-danger btn-sm" @click="deleteUser(user.uid)">
+                Hapus
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Modal Tambah User -->
-    <div v-if="showModal" class="modal" tabindex="-1" style="display: block">
-      <div class="modal-dialog modal-lg">
+    <div v-if="showModal" class="modal" tabindex="-1" style="display: block;">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
@@ -73,7 +74,7 @@
                 />
               </div>
               <div class="row">
-                <div class="col col-md-6">
+                <div class="col-12 col-md-6">
                   <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input
@@ -85,7 +86,7 @@
                     />
                   </div>
                 </div>
-                <div class="col col-md-6">
+                <div class="col-12 col-md-6">
                   <div class="mb-3">
                     <label for="phone" class="form-label">Telepon</label>
                     <input
@@ -121,7 +122,7 @@
                   required
                 />
               </div>
-              <button type="submit" class="btn btn-primary">Simpan</button>
+              <button type="submit" class="btn btn-1 w-100">Simpan</button>
             </form>
           </div>
         </div>
@@ -129,6 +130,7 @@
     </div>
   </main>
 </template>
+
 <script>
 import { ref, onMounted, computed } from "vue";
 import {
@@ -285,5 +287,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.btn-1{
+  background-color: #265c7f;
+  color: white;
 }
 </style>
