@@ -100,7 +100,7 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Add Event</button>
+      <button type="submit" class="btn btn-1">Add Event</button>
     </form>
   </div>
 </template>
@@ -239,5 +239,8 @@ export default {
 </script>
 
 <style scoped>
-/* Tidak diperlukan styling tambahan */
+.btn-1{
+  background-color: #285480;
+  color: white;
+}
 </style>
