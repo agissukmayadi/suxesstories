@@ -144,7 +144,7 @@ export default {
             eventName: item.event.name,
             testName: test.title,
             testToken: test.token,
-            testId: test.id,
+            testId: test.idSurvey,
             email: item.email,
             phone: item.phone,
             birthDate: item.birthDate,
@@ -152,6 +152,8 @@ export default {
             gender: item.gender,
           }))
         );
+
+        console.log(this.talents);
       } catch (error) {
         console.error("Error fetching talents: ", error);
       }
