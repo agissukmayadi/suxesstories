@@ -4,13 +4,8 @@
     <div class="row my-4 mt-1">
       <!-- Event Card -->
       <div class="col-md-6">
-        <div
-          class="card shadow-sm bg-body-tertiary rounde border-0 mb-4"
-          @click="handleCardClick"
-        >
-          <div
-            class="card-body d-flex align-items-center justify-content-between"
-          >
+        <div class="card shadow-sm bg-body-tertiary rounde border-0 mb-4" @click="handleCardClick">
+          <div class="card-body d-flex align-items-center justify-content-between">
             <div>
               <h5 class="card-title">Event</h5>
               <h3 class="text-primary">{{ eventTotal }}</h3>
@@ -29,9 +24,7 @@
       <div class="col-md-6">
         <router-link to="/talent" style="text-decoration: none">
           <div class="card shadow-sm bg-body-tertiary rounded border-0">
-            <div
-              class="card-body d-flex align-items-center justify-content-center text-center"
-            >
+            <div class="card-body d-flex align-items-center justify-content-center text-center">
               <div>
                 <h5 class="card-title">Talent</h5>
                 <h3 class="text-success">{{ talentTotal }}</h3>
@@ -44,38 +37,24 @@
     </div>
 
     <!-- Modal -->
-    <div
-      class="modal fade"
-      tabindex="-1"
-      :class="{ show: showModal }"
-      :style="{
-        display: showModal ? 'block' : 'none',
-        background: 'rgba(0, 0, 0, 0.5)',
-      }"
-    >
+    <div class="modal fade" tabindex="-1" :class="{ show: showModal }" :style="{
+      display: showModal ? 'block' : 'none',
+      background: 'rgba(0, 0, 0, 0.5)',
+    }">
       <div class="modal-dialog modal-lg">
         <div class="modal-content p-4">
           <div class="modal-header">
             <h5 class="modal-title">Event Status</h5>
-            <button
-              type="button"
-              class="btn-close"
-              @click="closeModal"
-            ></button>
+            <button type="button" class="btn-close" @click="closeModal"></button>
           </div>
 
           <!-- Event Status Cards -->
           <div class="row mb-4 mt-4">
             <!-- Not Started -->
             <div class="col-md-4">
-              <div
-                class="card shadow-sm bg-body-tertiary rounded mb-3"
-                style="border: none"
-              >
+              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none">
                 <div class="card-body d-flex align-items-center">
-                  <div
-                    class="circle bg-danger d-flex justify-content-center align-items-center"
-                  >
+                  <div class="circle bg-danger d-flex justify-content-center align-items-center">
                     <i class="bi bi-person-dash-fill text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
@@ -88,14 +67,9 @@
 
             <!-- On Going -->
             <div class="col-md-4">
-              <div
-                class="card shadow-sm bg-body-tertiary rounded mb-3"
-                style="border: none"
-              >
+              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none">
                 <div class="card-body d-flex align-items-center">
-                  <div
-                    class="circle bg-success d-flex justify-content-center align-items-center"
-                  >
+                  <div class="circle bg-success d-flex justify-content-center align-items-center">
                     <i class="bi bi-person-gear text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
@@ -108,14 +82,9 @@
 
             <!-- Done -->
             <div class="col-md-4">
-              <div
-                class="card shadow-sm bg-body-tertiary rounded"
-                style="border: none"
-              >
+              <div class="card shadow-sm bg-body-tertiary rounded" style="border: none">
                 <div class="card-body d-flex align-items-center">
-                  <div
-                    class="circle bg-warning d-flex justify-content-center align-items-center"
-                  >
+                  <div class="circle bg-warning d-flex justify-content-center align-items-center">
                     <i class="bi bi-person-check-fill text-white fs-3"></i>
                   </div>
                   <div class="ms-3">
@@ -132,27 +101,15 @@
             <div class="col-md-10">
               <div class="input-group">
                 <!-- Input Field -->
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="search"
-                  placeholder="Search"
-                />
+                <input type="text" class="form-control" v-model="search" placeholder="Search" />
                 <!-- Icon Search di sebelah kanan -->
-                <span
-                  class="input-group-text"
-                  style="background-color: #265c7f"
-                >
+                <span class="input-group-text" style="background-color: #265c7f">
                   <i class="bi bi-search text-white"></i>
                 </span>
               </div>
             </div>
             <div class="col-md-2 d-flex">
-              <button
-                class="btn btn-secondary"
-                style="background-color: #265c7f"
-                @click="toggleFilter"
-              >
+              <button class="btn btn-secondary" style="background-color: #265c7f" @click="toggleFilter">
                 <i class="bi bi-funnel"></i> Filter
               </button>
             </div>
@@ -163,15 +120,17 @@
             <div class="col-sm-6">
               <p class="mb-1">Selected Event</p>
               <select class="form-select" v-model="selectedEvent">
-                <option value="Physics Happy Day">Physics Happy Day</option>
-                <option value="Women Strong">Women Strong</option>
-                <option value="Insights Quest">Insights Quest</option>
+                <!-- Looping this.events -->
+                <option v-for="event in events" :key="event.id" :value="event.name">
+                  {{ event.name }}
+                </option>
               </select>
             </div>
             <div class="col-sm-6">
               <p class="mb-1">Selected Test</p>
               <select class="form-select" v-model="selectedTest">
-                <option v-for="test in tests" :key="test.id" :value="test.id">
+                <!-- Looping this.tests -->
+                <option v-for="test in tests" :key="test.id" :value="test.title">
                   {{ test.title }}
                 </option>
               </select>
@@ -193,16 +152,13 @@
                 <td>
                   <!-- Lingkaran warna dan teks status -->
                   <div class="d-flex align-items-center">
-                    <div
-                      class="circle"
-                      :style="{
-                        backgroundColor: getStatusColor(event.status),
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        marginRight: '10px',
-                      }"
-                    ></div>
+                    <div class="circle" :style="{
+                      backgroundColor: getStatusColor(event.status),
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      marginRight: '10px',
+                    }"></div>
                     <span class="text-black">{{ event.status }}</span>
                   </div>
                 </td>
@@ -228,18 +184,11 @@
           <div class="card-body">
             <h5 class="card-title mt-4">Top 5 Event</h5>
             <ul class="list-group list-group-flush">
-              <li
-                class="list-group-item d-flex align-items-center bg-body-tertiary"
-                v-for="event in topEvents"
-                :key="event.id"
-              >
+              <li class="list-group-item d-flex align-items-center bg-body-tertiary" v-for="event in topEvents"
+                :key="event.id">
                 <!-- Gambar kecil -->
-                <img
-                  src="../assets/img/poster.jpg"
-                  alt="Event Image"
-                  class="img-thumbnail me-3"
-                  style="width: 50px; height: 50px; object-fit: cover"
-                />
+                <img src="../assets/img/poster.jpg" alt="Event Image" class="img-thumbnail me-3"
+                  style="width: 50px; height: 50px; object-fit: cover" />
                 <!-- Detail Event -->
                 <div>
                   <strong>{{ event.name }}</strong>
@@ -255,25 +204,16 @@
     <!-- Daftar Event -->
     <div class="row">
       <div class="col-12 mt-4 card shadow-sm bg-body-tertiary rounded border-0">
-        <div
-          class="d-flex justify-content-between align-items-center mb-3 mt-3"
-        >
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
           <h5 class="mb-0">Daftar Event</h5>
           <router-link to="/event/create">
-            <button
-              class="btn"
-              style="background-color: #265c7f; color: white; border: none"
-            >
+            <button class="btn" style="background-color: #265c7f; color: white; border: none">
               Add Event
             </button>
           </router-link>
         </div>
         <div class="row g-3">
-          <div
-            class="col-6 col-md-4 flex-shrink-0"
-            v-for="event in daftarEvent"
-            :key="event.id"
-          >
+          <div class="col-6 col-md-4 flex-shrink-0" v-for="event in daftarEvent" :key="event.id">
             <div class="bg-white p-3 border rounded d-flex flex-column gap-2">
               <h5>{{ event.name }}</h5>
               <img src="../assets/img/poster.jpg" alt="" class="w-100" />
@@ -283,9 +223,7 @@
           </div>
         </div>
         <router-link to="/event" style="text-decoration: none">
-          <div
-            class="d-flex justify-content-center align-items-center text-black mb-3 mt-3"
-          >
+          <div class="d-flex justify-content-center align-items-center text-black mb-3 mt-3">
             Lihat Selengkapnya
           </div>
         </router-link>
@@ -372,8 +310,8 @@ export default {
       return status === "Not Started"
         ? "text-danger"
         : status === "On Going"
-        ? "text-success"
-        : "text-warning";
+          ? "text-success"
+          : "text-warning";
     },
     getStatusColor(status) {
       if (status === "Not Started") return "red";
@@ -616,6 +554,7 @@ export default {
   color: white;
   border: none;
 }
+
 .progress-circle {
   width: 80px;
   height: 80px;
