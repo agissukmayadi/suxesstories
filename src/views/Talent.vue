@@ -1,6 +1,6 @@
 <template>
   <div class="talent vh-100">
-    <h3>Talent</h3>
+    <h3>Result Talent</h3>
 
     <!-- Search and Filter Section -->
     <div class="row mb-4">
