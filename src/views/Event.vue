@@ -15,7 +15,7 @@
             v-for="event in events"
             :key="event.id"
           >
-            <div class="bg-white p-3 border rounded d-flex flex-column gap-2">
+            <div class="bg-white p-3 border  border-2 rounded rounded-3 d-flex flex-column gap-2">
               <h5>{{ event.name }}</h5>
               <img src="../assets/img/poster.jpg" alt="" class="w-100" />
               <p class="card-description">{{ event.description }}</p>
