@@ -1,20 +1,15 @@
 <template>
   <div class="dashboard vh-100">
     <!-- Statistik -->
-    <div class="row my-4 mt-1">
+    <div class="row">
       <!-- Event Card -->
       <div class="col-md-6">
         <div class="card shadow-sm bg-body-tertiary rounde border-0 mb-4" @click="handleCardClick">
-          <div class="card-body d-flex align-items-center justify-content-between">
+          <div class="card-body d-flex align-items-center justify-content-center text-center">
             <div>
               <h5 class="card-title">Event</h5>
               <h3 class="text-primary">{{ eventTotal }}</h3>
               <p class="text-muted">Acara Jobfair</p>
-            </div>
-            <div class="d-flex me-3">
-              <div class="progress-circle text-primary">
-                <span>{{ eventTotal }}</span>
-              </div>
             </div>
           </div>
         </div>
@@ -169,9 +164,9 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row p-3">
       <!-- Grafik -->
-      <div class="col-md-8 mt-2 shadow-sm bg-body-tertiary rounded">
+      <div class="col-md-8 shadow-sm bg-body-tertiary rounded p-3">
         <h3 class="mt-4 text-center">Jumlah Event</h3>
         <div class="chart-container">
           <canvas ref="chartCanvas"></canvas>
@@ -179,7 +174,7 @@
       </div>
 
       <!-- Top 5 Event -->
-      <div class="col-md-4 mt-2">
+      <div class="col-md-4 ">
         <div class="card shadow-sm bg-body-tertiary rounded border-0">
           <div class="card-body">
             <h5 class="card-title mt-4">Top 5 Event</h5>
@@ -202,8 +197,8 @@
     </div>
 
     <!-- Daftar Event -->
-    <div class="row">
-      <div class="col-12 mt-4 card shadow-sm bg-body-tertiary rounded border-0">
+    <div class="row p-3">
+      <div class="col-12 mt-4 card shadow-sm bg-body-tertiary rounded border-0 p-3">
         <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
           <h5 class="mb-0">Daftar Event</h5>
           <router-link to="/event/create">
@@ -214,7 +209,7 @@
         </div>
         <div class="row g-3">
           <div class="col-6 col-md-4 flex-shrink-0" v-for="event in daftarEvent" :key="event.id">
-            <div class="bg-white p-3 border rounded d-flex flex-column gap-2">
+            <div class="bg-white p-3 border rounded rounded rounded-3 d-flex flex-column gap-2">
               <h5>{{ event.name }}</h5>
               <img src="../assets/img/poster.jpg" alt="" class="w-100" />
               <p class="card-description">{{ event.description }}</p>
@@ -554,19 +549,6 @@ export default {
   color: white;
   border: none;
 }
-
-.progress-circle {
-  width: 80px;
-  height: 80px;
-  border: 8px solid #e0e0e0;
-  border-top-color: currentColor;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-}
-
 .circle {
   width: 50px;
   height: 50px;
