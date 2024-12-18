@@ -319,6 +319,7 @@ import {
   where,
   documentId,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 import QRCode from "qrcode";
 import Swal from "sweetalert2";
@@ -384,7 +385,11 @@ export default {
   methods: {
     async fetchEvents() {
       try {
-        const querySnapshot = await getDocs(collection(db, "events"));
+        const eventsQuery = query(
+          collection(db, "events"),
+          orderBy("createdAt", "desc") // Mengurutkan berdasarkan createdAt, secara ascending
+        );
+        const querySnapshot = await getDocs(eventsQuery);
         this.events = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
