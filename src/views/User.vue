@@ -36,10 +36,10 @@
             <td>{{ user.role }}</td>
             <td>
               <button class="btn btn-1 me-2 btn-sm" @click="editUser(user)">
-                Edit
+                <i class="bi bi-pencil"></i>
               </button>
               <button class="btn btn-danger btn-sm" @click="deleteUser(user.uid)">
-                Hapus
+                <i class="bi bi-trash"></i>
               </button>
             </td>
           </tr>
