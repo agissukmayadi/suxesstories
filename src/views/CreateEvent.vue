@@ -46,7 +46,8 @@
       <div class="mb-3">
         <label class="form-label">Pilih Test</label>
         <div class="row g-2">
-          <div class="col-3" v-for="test in tests" :key="test.id">
+          <p v-if="isLoadingTest">Loading ...</p>
+          <div class="col-3" v-for="test in tests" :key="test.id" v-else>
             <div class="form-check">
               <input
                 class="form-check-input"
@@ -137,11 +138,13 @@ export default {
           talent: false,
         },
       },
+      isLoadingTest: false,
       tests: [], // Data test
     };
   },
   methods: {
     async fetchTestsAndSurveys() {
+      this.isLoadingTest = true;
       try {
         const [testsSnapshot, surveysResponse] = await Promise.all([
           getDocs(collection(db, "tests")), // Ambil data tes dari Firestore
@@ -163,8 +166,10 @@ export default {
           );
         }
 
+        this.isLoadingTest = false;
         console.log("Tests and Surveys fetched successfully:", this.tests);
       } catch (error) {
+        this.isLoadingTest = false;
         console.error("Error fetching tests and surveys:", error);
       }
     },
@@ -239,7 +244,7 @@ export default {
 </script>
 
 <style scoped>
-.btn-1{
+.btn-1 {
   background-color: #285480;
   color: white;
 }

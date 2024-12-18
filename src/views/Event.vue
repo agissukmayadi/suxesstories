@@ -9,13 +9,32 @@
             Add Event
           </router-link>
         </div>
+        <div
+          class="mb-4 d-flex flex-column flex-lg-row align-items-lg-baseline gap-3"
+        >
+          <input
+            type="text"
+            class="form-control flex-grow-1"
+            placeholder="Cari nama event..."
+            v-model="searchQuery"
+          />
+          <select
+            class="form-select mb-3"
+            v-model="filterCategory"
+            @change="applyFilter"
+          >
+            <option value="all">All</option>
+            <option value="done">Done</option>
+            <option value="ongoing">On-going</option>
+          </select>
+        </div>
         <div class="row g-3">
           <div
             class="col-6 col-md-4 flex-shrink-0"
-            v-for="event in events"
+            v-for="event in paginatedEvents"
             :key="event.id"
           >
-            <div class="bg-white p-3 border  border-2 rounded rounded-3 d-flex flex-column gap-2">
+            <div class="bg-white p-3 border rounded d-flex flex-column gap-2">
               <h5>{{ event.name }}</h5>
               <img src="../assets/img/poster.jpg" alt="" class="w-100" />
               <p class="card-description">{{ event.description }}</p>
@@ -24,6 +43,22 @@
               </button>
             </div>
           </div>
+        </div>
+        <div class="pagination d-flex justify-content-center p-4">
+          <button
+            class="btn btn-save me-2"
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
+          >
+            Previous
+          </button>
+          <button
+            class="btn btn-save ms-2"
+            :disabled="currentPage === totalPages"
+            @click="changePage(currentPage + 1)"
+          >
+            Next
+          </button>
         </div>
       </section>
       <div v-if="showModal" class="modal" tabindex="-1" style="display: block">
@@ -293,13 +328,51 @@ export default {
   data() {
     return {
       events: [],
+      currentPage: 1, // Halaman aktif
+      perPage: 6, // Jumlah item per halaman
+      searchQuery: "",
       tests: [],
       showModal: false,
       showModalEdit: false,
       showModalQRCode: false,
       selectedEvent: {},
       selectedTests: [],
+      filterCategory: "all",
     };
+  },
+  computed: {
+    filteredEvents() {
+      let filtered = this.events;
+
+      // Filter berdasarkan kategori
+      if (this.filterCategory === "done") {
+        filtered = filtered.filter(
+          (event) => new Date(event.date) < new Date()
+        );
+      } else if (this.filterCategory === "ongoing") {
+        filtered = filtered.filter(
+          (event) => new Date(event.date) >= new Date()
+        );
+      }
+
+      // Filter berdasarkan pencarian
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter((event) =>
+          event.name.toLowerCase().includes(query)
+        );
+      }
+
+      return filtered;
+    },
+    totalPages() {
+      return Math.ceil(this.filteredEvents.length / this.perPage);
+    },
+    paginatedEvents() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.filteredEvents.slice(start, end);
+    },
   },
   methods: {
     async fetchEvents() {
@@ -312,6 +385,13 @@ export default {
       } catch (error) {
         console.error("Error fetching events:", error);
       }
+    },
+
+    changePage(page) {
+      // Pastikan halaman tidak melebihi batas
+      if (page < 1) page = 1;
+      if (page > this.totalPages) page = this.totalPages;
+      this.currentPage = page;
     },
 
     async fetchTests() {
