@@ -208,18 +208,14 @@ onMounted(async () => {
         }
       }
 
-      console.log("Selected Tests:", selectedTests);
-
-      const eventDate = new Date(eventData.date);
-      eventDate.setHours(23);
-      eventDate.setMinutes(59);
-      eventDate.setSeconds(59);
-      eventDate.setMilliseconds(999);
-
-      const currentDate = new Date();
-      console.log(eventData.date);
-      console.log(currentDate);
-      if (eventDate < currentDate) {
+      const currentDate = new Date().setHours(0, 0, 0, 0);
+      const eventDate = new Date(eventData.date).setHours(0, 0, 0, 0);
+      if (currentDate == eventDate) {
+        eventNotFound.value = false;
+      } else if (currentDate < eventDate) {
+        eventNotFoundMessage.value = "Event belum dimulai.";
+        eventNotFound.value = true;
+      } else if (currentDate > eventDate) {
         eventNotFoundMessage.value = "Event sudah ditutup.";
         eventNotFound.value = true;
       }
@@ -331,11 +327,9 @@ const submitForm = async () => {
           addRegistration();
         },
         onPending: function (result) {
-          alert("Payment pending!");
           console.log(result);
         },
         onError: function (result) {
-          alert("Payment failed!");
           console.log(result);
         },
       });

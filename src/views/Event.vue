@@ -25,6 +25,7 @@
           >
             <option value="all">All</option>
             <option value="done">Done</option>
+            <option value="today">Today</option>
             <option value="ongoing">On-going</option>
           </select>
         </div>
@@ -351,7 +352,13 @@ export default {
         );
       } else if (this.filterCategory === "ongoing") {
         filtered = filtered.filter(
-          (event) => new Date(event.date) >= new Date()
+          (event) => new Date(event.date) > new Date()
+        );
+      } else if (this.filterCategory === "today") {
+        filtered = filtered.filter(
+          (event) =>
+            new Date(event.date).setHours(0, 0, 0, 0) ==
+            new Date().setHours(0, 0, 0, 0)
         );
       }
 

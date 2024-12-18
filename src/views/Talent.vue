@@ -17,13 +17,20 @@
           </span>
         </div>
       </div>
-      <div class="col-md-2 d-flex">
+      <div class="col-md-2 d-flex gap-3">
         <button
-          class="btn btn-secondary"
+          class="btn btn-secondary w-100"
           style="background-color: #265c7f"
           @click="toggleFilter"
         >
           <i class="bi bi-funnel"></i> Filter
+        </button>
+        <button
+          v-if="isFilterApplied"
+          class="btn btn-secondary-outline w-100"
+          @click="clearFilters"
+        >
+          <i class="bi bi-x"></i> Clear
         </button>
       </div>
     </div>
@@ -126,6 +133,9 @@ export default {
         return matchesSearch && matchesEvent && matchesTest;
       });
     },
+    isFilterApplied() {
+      return this.selectedEvent || this.selectedTest || this.search;
+    },
   },
   methods: {
     async fetchTalents() {
@@ -191,6 +201,11 @@ export default {
     toggleFilter() {
       this.showFilter = !this.showFilter;
     },
+    clearFilters() {
+      this.selectedEvent = "";
+      this.selectedTest = "";
+      this.search = "";
+    },
     async downloadPDF(talent) {
       try {
         const response = await fetch(
@@ -252,5 +267,10 @@ export default {
 .btn-primary {
   background-color: #265c7f;
   border: none;
+}
+
+.btn-secondary-outline {
+  border: 1px solid #265c7f;
+  color: #265c7f;
 }
 </style>
