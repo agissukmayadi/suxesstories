@@ -4,7 +4,7 @@
     <div class="row">
       <!-- Event Card -->
       <div class="col-md-6">
-        <div class="card shadow-sm bg-body-tertiary rounde border-0 mb-4" @click="handleCardClick">
+        <div class="card shadow-sm rounde border-0 mb-4" @click="handleCardClick" style="background-color: #E9EFF2;">
           <div class="card-body d-flex align-items-center justify-content-center text-center">
             <div>
               <h5 class="card-title">Event</h5>
@@ -18,7 +18,7 @@
       <!-- Talent Card -->
       <div class="col-md-6">
         <router-link to="/talent" style="text-decoration: none">
-          <div class="card shadow-sm bg-body-tertiary rounded border-0">
+          <div class="card shadow-sm rounded border-0" style="background-color: #E9EFF2;">
             <div class="card-body d-flex align-items-center justify-content-center text-center">
               <div>
                 <h5 class="card-title">Talent</h5>
@@ -47,7 +47,7 @@
           <div class="row mb-4 mt-4">
             <!-- Not Started -->
             <div class="col-md-4">
-              <div class="card shadow-sm bg-body-tertiary rounded mb-3" style="border: none">
+              <div class="card shadow-sm rounded mb-3" style="border: none;">
                 <div class="card-body d-flex align-items-center">
                   <div class="circle bg-danger d-flex justify-content-center align-items-center">
                     <i class="bi bi-person-dash-fill text-white fs-3"></i>
@@ -166,7 +166,7 @@
 
     <div class="row p-3">
       <!-- Grafik -->
-      <div class="col-md-8 shadow-sm bg-body-tertiary rounded p-3">
+      <div class="col-md-8 shadow-sm rounded p-3" style="background-color: #E9EFF2;">
         <h3 class="mt-4 text-center">Jumlah Event</h3>
         <div class="chart-container">
           <canvas ref="chartCanvas"></canvas>
@@ -175,12 +175,12 @@
 
       <!-- Top 5 Event -->
       <div class="col-md-4 ">
-        <div class="card shadow-sm bg-body-tertiary rounded border-0">
+        <div class="card shadow-sm rounded border-0" style="background-color: #E9EFF2;">
           <div class="card-body">
             <h5 class="card-title mt-4">Top 5 Event</h5>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item d-flex align-items-center bg-body-tertiary" v-for="event in topEvents"
-                :key="event.id">
+              <li class="list-group-item d-flex align-items-center " v-for="event in topEvents"
+                :key="event.id" style="background-color: #E9EFF2;">
                 <!-- Gambar kecil -->
                 <img src="../assets/img/poster.jpg" alt="Event Image" class="img-thumbnail me-3"
                   style="width: 50px; height: 50px; object-fit: cover" />
@@ -198,7 +198,7 @@
 
     <!-- Daftar Event -->
     <div class="row p-3">
-      <div class="col-12 mt-4 card shadow-sm bg-body-tertiary rounded border-0 p-3">
+      <div class="col-12 mt-4 card shadow-sm rounded border-0 p-3" style="background-color: #E9EFF2;">
         <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
           <h5 class="mb-0">Daftar Event</h5>
           <router-link to="/event/create">
@@ -209,7 +209,7 @@
         </div>
         <div class="row g-3">
           <div class="col-6 col-md-4 flex-shrink-0" v-for="event in daftarEvent" :key="event.id">
-            <div class="bg-white p-3 border rounded rounded rounded-3 d-flex flex-column gap-2">
+            <div class="bg-white p-3 border border-2 rounded rounded rounded-3 d-flex flex-column gap-2">
               <h5>{{ event.name }}</h5>
               <img src="../assets/img/poster.jpg" alt="" class="w-100" />
               <p class="card-description">{{ event.description }}</p>
